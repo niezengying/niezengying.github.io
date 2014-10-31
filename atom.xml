@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Walk step by step]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://niezengying.github.com/"/>
-  <updated>2014-10-30T06:46:49.012Z</updated>
+  <updated>2014-10-31T18:27:18.878Z</updated>
   <id>http://niezengying.github.com/</id>
   
   <author>
@@ -15,11 +15,153 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[Hello World]]></title>
-    <link href="http://niezengying.github.com/2014/10/30/hello-world/"/>
-    <id>http://niezengying.github.com/2014/10/30/hello-world/</id>
+    <title><![CDATA[CUDA Learning]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA-Learning/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA-Learning/</id>
+    <published>2014-10-29T17:30:46.000Z</published>
+    <updated>2014-10-30T09:50:19.000Z</updated>
+    <content type="html"><![CDATA[]]></content>
+    <summary type="html">
+    <![CDATA[]]>
+    </summary>
+    
+      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CUDA Learning]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA-Learning/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA-Learning/</id>
+    <published>2014-10-29T17:30:46.000Z</published>
+    <updated>2014-10-30T09:50:19.000Z</updated>
+    <content type="html"><![CDATA[]]></content>
+    <summary type="html">
+    <![CDATA[]]>
+    </summary>
+    
+      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CUDA Learning]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA-Learning/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA-Learning/</id>
+    <published>2014-10-29T17:30:46.000Z</published>
+    <updated>2014-10-30T09:50:19.000Z</updated>
+    <content type="html"><![CDATA[]]></content>
+    <summary type="html">
+    <![CDATA[]]>
+    </summary>
+    
+      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CUDA学习笔记（1）]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA-Learning/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA-Learning/</id>
+    <published>2014-10-29T17:30:46.000Z</published>
+    <updated>2014-10-31T18:26:38.000Z</updated>
+    <content type="html"><![CDATA[<h1 id="前言">前言</h1>
+<p>两个月前，老板交给我一个艰巨的任务：他希望能在三维实时重建方向有所突破，并拟将实验室的几套系统利用GPU并行计算，以期全部实现实时重建。我接下了这个任务，于是进入紧张的CUDA学习和系统改进。</p>
+<p>现在，我将结合近两个月的学习体验,梳理CUDA的核心知识点。我将针对CUDA学习更新一系列博文。学习CUDA，我推荐NVIDIA官方出版的《GPU高性能编程——CUDA实战》与《CUDA编程指南》两书，本系列博文也将其作为参考。</p>
+<hr>
+<h1 id="CUDA简介">CUDA简介</h1>
+<p>CUDA架构：NVIDIA推出的通用并行计算架构，它包含了一个统一的着色器流水线，使得执行通用计算的程序能够对芯片上的每个ALU进行排列,也就是每一个ALU单元都可以并行起来进行大规模计算。</p>
+<p>CUDA C则是专门为这种架构设计的编程语言。它基于C语言的，因此只要有C语言基础的同学都能很快上手。</p>
+<h2 id="核函数(kernel)">核函数(kernel)</h2>
+<p>首先我们来看两段代码：</p>
+<p>代码1：<strong><em>标准C</em></strong></p>
+<figure class="highlight C"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> add(){ }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	add();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+
+
+<p>代码2：<strong><em>CUDA C</em></strong></p>
+<figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add_kernel(){ }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	add_kernel&lt;&lt;&lt;<span class="number">1</span>,<span class="number">1</span>&gt;&gt;&gt;(); <span class="comment">//kernel</span></div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这两段代码，有两个有区别的地方：</p>
+<ul>
+<li>Kernel函数<code>add_kernel()</code>定义时,带有修饰符<code>__global__</code>;</li>
+<li>该函数调用时，带有修饰符<code>&lt;&lt;&lt;1,1&gt;&gt;&gt;</code>。</li>
+</ul>
+<p>区别解释：</p>
+<ul>
+<li><code>__global__</code>修饰符表示，该函数在GPU上运行，属于设备代码；</li>
+<li><code>&lt;&lt;&lt;1,1&gt;&gt;&gt;</code>修饰符则告诉GPU如何启用设备代码。</li>
+</ul>
+<p>其实CUDA C就是这么简单，它将被指定在GPU上执行的代码传给NVCC编译，其它在主机上执行的代码则交给主机编译器。CUDA就这样对主机来说变成透明的了，是不是很简单？</p>
+<h2 id="参数传递">参数传递</h2>
+<p>根据以上说明，初步了解了CUDA C与标准C的区别, 但问题有一个问题。</p>
+<p>问1：<strong>核函数如何传递参数呢？</strong><br>答1： 可以<strong>像C函数一样将参数传递给核函数</strong>，但<strong>kernel中只能调用显存中的数据</strong>。因此我们必须为任何有用数据分配显存空间，并将返回值传给主机。</p>
+<p>代码3：<strong><em>带参数的CUDA C</em></strong></p>
+<figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add_kernel(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> *c){</div><div class="line">	*c = a + b;</div><div class="line"> }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	<span class="keyword">int</span> h_c;</div><div class="line">	<span class="keyword">int</span> dev_a, dev_b, *dev_c;</div><div class="line">	cudaMalloc((<span class="keyword">void</span>**)&dev_c, <span class="keyword">sizeof</span>(<span class="keyword">int</span>)); <span class="comment">//分配显存空间</span></div><div class="line"></div><div class="line">	add_kernel&lt;&lt;&lt;<span class="number">1</span>,<span class="number">1</span>&gt;&gt;&gt;（dev_a, dev_b, dev_c);</div><div class="line"></div><div class="line">	cudaMemcpy(&h_c, dev_c, <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyDeviceToHost); <span class="comment">//将显存数据传回主机</span></div><div class="line"></div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>对比代码2和代码3，可以看出多出两行代码<code>cudaMalloc()</code>和<code>cudaMemcpy()</code>;它们均是CUDA提供的标准函数，其分别负责<strong>分配设备空间</strong>以及<strong>主机与设备的数据交换</strong>。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<h1 id="前言">前言</h1>
+<p>两个月前，老板交给我一个艰巨的任务：他希望能在三维实时重建方向有所突破，并拟将实验室的几套系统利用GPU并行计算，以期全部实现实时重建。我接下了这个任务，于是进入紧张的CUDA学习和系统改进。</p>
+<p>现在，我将结合近两个月的学]]>
+    </summary>
+    
+      <category term="CUDA C" scheme="http://niezengying.github.com/tags/CUDA-C/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CUDA Learning]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA%20Learning/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA Learning/</id>
+    <published>2014-10-29T17:30:46.000Z</published>
+    <updated>2014-10-30T09:17:31.000Z</updated>
+    <content type="html"><![CDATA[]]></content>
+    <summary type="html">
+    <![CDATA[]]>
+    </summary>
+    
+      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CUDA Learning]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA%20Learning/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA Learning/</id>
+    <published>2014-10-29T17:30:46.000Z</published>
+    <updated>2014-10-30T09:17:31.000Z</updated>
+    <content type="html"><![CDATA[]]></content>
+    <summary type="html">
+    <![CDATA[]]>
+    </summary>
+    
+      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CUDA Learning]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA%20Learning/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA Learning/</id>
+    <published>2014-10-29T17:30:46.000Z</published>
+    <updated>2014-10-30T09:17:31.000Z</updated>
+    <content type="html"><![CDATA[]]></content>
+    <summary type="html">
+    <![CDATA[]]>
+    </summary>
+    
+      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[Hexo Introduction]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/Hexo%20Intro/"/>
+    <id>http://niezengying.github.com/2014/10/30/Hexo Intro/</id>
     <published>2014-10-29T16:49:47.000Z</published>
-    <updated>2014-10-29T16:49:47.000Z</updated>
+    <updated>2014-10-30T06:52:51.000Z</updated>
     <content type="html"><![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">trobuleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
 <h2 id="Quick_Start">Quick Start</h2>
 <h3 id="Create_a_new_post">Create a new post</h3>
@@ -42,6 +184,8 @@
     <summary type="html">
     <![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io]]>
     </summary>
+    
+      <category term="Other" scheme="http://niezengying.github.com/tags/Other/"/>
     
   </entry>
   
