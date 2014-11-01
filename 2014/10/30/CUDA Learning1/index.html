@@ -74,7 +74,7 @@
     </p>
   <p class="article-time">
     <time datetime="2014-10-29T17:30:46.000Z" itemprop="datePublished">10月 30 2014</time>
-    更新日期:<time datetime="2014-11-01T08:47:12.000Z" itemprop="dateModified">11月 1 2014</time>
+    更新日期:<time datetime="2014-11-01T08:58:12.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -83,12 +83,12 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#cuda简介_"><span class="toc-number">1.</span> <span class="toc-text">cuda简介 </span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#核函数(kernel)_"><span class="toc-number"></span> <span class="toc-text">核函数(kernel) </span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#声明与调用"><span class="toc-number">1.</span> <span class="toc-text">声明与调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">2.</span> <span class="toc-text">参数传递</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程并行"><span class="toc-number">3.</span> <span class="toc-text">线程并行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结_"><span class="toc-number">4.</span> <span class="toc-text">总结 </span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#cuda简介_"><span class="toc-number">1.</span> <span class="toc-text">cuda简介 </span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#核函数(kernel)_"><span class="toc-number">2.</span> <span class="toc-text">核函数(kernel) </span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#声明与调用"><span class="toc-number">2.1.</span> <span class="toc-text">声明与调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">2.2.</span> <span class="toc-text">参数传递</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程并行"><span class="toc-number">2.3.</span> <span class="toc-text">线程并行</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
 		</div>
 		
 		<p><strong>前言</strong><br>两个月前，我接下了移植实验室三维重建系统到gpu上执行的任务，以期实现实时重建的效果。现在，我将结合近两个月的学习更新一系列博文，以总结cuda的核心知识点。关于cuda学习资料，我推荐nvidia官方出版的《gpu高性能编程——cuda实战》与《cuda编程指南》两书，本系列博文也将其作为参考。</p>
 <hr>
-<h2 id="cuda简介_">cuda简介 </h2>
+<h1 id="cuda简介_">cuda简介 </h1>
 <p><strong>cuda架构</strong>：是nvidia推出的通用并行计算架构，它包含了一个统一的着色器流水线，使得执行通用计算的程序能够对芯片上的每个alu进行排列,也就是每一个alu单元都可以并行起来进行大规模计算。<br><strong>cuda c</strong>：则是专门为这种架构设计的编程语言。它基于c语言的，因此只要有c语言基础的同学都能很快上手。<br><strong>编程模型</strong>：cuda允许程序员定义成为内核（kernel）的c语言函数，在调用此类函数时，他将<strong>由n个不同的cuda线程并行执行n次</strong>。</p>
 <hr>
 <h1 id="核函数(kernel)_">核函数(kernel) </h1>
@@ -128,8 +128,8 @@
 <p>问2：<strong>应该如何定义核函数，以使线程并行执行并准确获取所需参数呢？</strong><br>答2：执行内核的每个线程都会被分配一个独特的线程id，可通过内置的threadidx变量在内核中访问此id。我们可以利用线程id去该线程索引所需的参数值；</p>
 <p>依然以代码3为例，<code>add_kernel()</code>实际所做的工作也就是将a,b两组数据的对应元素两两相加。该函数中的代码:<br><code>int i = threadidx.x</code>作用在于获取线程id(以0开始计数)；<br><code>c[i] = a[i] + b[i]</code>则表示，每个线程将线程id作为索引号，获取该线程对应处理的元素；<br>这样就能使n个线程并行起来，每个线程实现其中一组元素的加法操作，从而避免单线程循环n次计算，大大提高运算速度。</p>
 <hr>
-<h2 id="总结_">总结 </h2>
-<p>总结起来，<br><strong>编程模型</strong>： 定义称为内核（kernel）的c语言函数，在调用此类函数时，它将有n个不同的cuda线程并行执行n次<br><strong>声明方式</strong>： <code>__global__ void kernel ( void ){};</code><br><strong>调用方式</strong>：<code>kernel&lt;&lt;&lt;...&gt;&gt;&gt; (); //&lt;&lt;&lt;...&gt;&gt;&gt; 指定每次调用的cuda线程数。</code><br><strong>参数传递</strong>：核函数与c函数参数传递形式一样，但核函数参数必须为设备存储区域的数据。<br><strong>线程并行</strong>：每个线程利用线程id去索引合适的元素进行计算。</p>
+<h1 id="总结">总结</h1>
+<p>总结起来，<br><strong>编程模型</strong>： 定义称为kernel的c语言函数，kernel将有n个不同的cuda线程并行执行n次；<br><strong>声明与调用</strong>： <code>__global__ void kernel ( void ){};</code><br>            <code>kernel&lt;&lt;&lt;...&gt;&gt;&gt; (); //&lt;&lt;&lt;...&gt;&gt;&gt; 指定每次调用的cuda线程数。</code><br><strong>参数传递</strong>：核函数与c函数参数传递形式一样，但核函数参数必须为设备存储区域的数据。<br><strong>线程并行</strong>：每个线程利用线程id去索引合适的元素进行计算。</p>
 <p>如果看到这里，对并行编程还不太明白，没关系。我将在下一篇博文详细介绍cuda并行编程以及线程层次结构。</p>
   
 	</div>
@@ -175,7 +175,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#cuda简介_"><span class="toc-number">1.</span> <span class="toc-text">cuda简介 </span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#核函数(kernel)_"><span class="toc-number"></span> <span class="toc-text">核函数(kernel) </span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#声明与调用"><span class="toc-number">1.</span> <span class="toc-text">声明与调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">2.</span> <span class="toc-text">参数传递</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程并行"><span class="toc-number">3.</span> <span class="toc-text">线程并行</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#总结_"><span class="toc-number">4.</span> <span class="toc-text">总结 </span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#cuda简介_"><span class="toc-number">1.</span> <span class="toc-text">cuda简介 </span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#核函数(kernel)_"><span class="toc-number">2.</span> <span class="toc-text">核函数(kernel) </span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#声明与调用"><span class="toc-number">2.1.</span> <span class="toc-text">声明与调用</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">2.2.</span> <span class="toc-text">参数传递</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#线程并行"><span class="toc-number">2.3.</span> <span class="toc-text">线程并行</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#总结"><span class="toc-number">3.</span> <span class="toc-text">总结</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -188,7 +188,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/CUDA-C/" style="font-size: NaNpx;">CUDA C</a><a href="/tags/Other/" style="font-size: NaNpx;">Other</a><a href="/tags/cuda-c/" style="font-size: NaNpx;">cuda c</a>
+       <a href="/tags/Other/" style="font-size: NaNpx;">Other</a><a href="/tags/cuda-c/" style="font-size: NaNpx;">cuda c</a>
     </div>
   </div>
 
