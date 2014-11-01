@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Walk step by step]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://niezengying.github.com/"/>
-  <updated>2014-11-01T09:55:32.563Z</updated>
+  <updated>2014-11-01T09:58:22.860Z</updated>
   <id>http://niezengying.github.com/</id>
   
   <author>
@@ -83,14 +83,12 @@ B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BL
   </entry>
   
   <entry>
-    <title><![CDATA[]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA4%20%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA4 共享内存/</id>
-    <published>2014-11-01T09:52:16.000Z</published>
-    <updated>2014-11-01T09:53:01.000Z</updated>
-    <content type="html"><![CDATA[<p>title:cuda学习(4)——共享内存<br>date: 2014-11-01 17:52:16</p>
-<h2 id="tags:_cuda">tags: cuda</h2>
-<p>线程协作实例:  &lt;数组和&gt;</p>
+    <title><![CDATA[CUDA4-共享内存]]></title>
+    <link href="http://niezengying.github.com/2014/11/01/CUDA4-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/"/>
+    <id>http://niezengying.github.com/2014/11/01/CUDA4-共享内存/</id>
+    <published>2014-11-01T09:54:15.000Z</published>
+    <updated>2014-11-01T09:58:01.000Z</updated>
+    <content type="html"><![CDATA[<p>线程协作实例:  &lt;数组和&gt;</p>
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">__global__ void sum(float *a)            </div><div class="line">	__shared__ float cache[threadsPerBlock];</div><div class="line">	int tid = threadIdx.x + blockIdx.x * blockDim.x;</div><div class="line">	int cacheIndex = threadIdx.x;</div><div class="line">	/*</div><div class="line">		generate the value of cache[];</div><div class="line">	*/</div><div class="line">	int i = blockDim.x/2;</div><div class="line">	while( i != 0 ){</div><div class="line">		if(cacheIndex &lt; i)</div><div class="line">			cache[cacheIndex] += cache [cacheIndex + i ];</div><div class="line">		__syncthreads();</div><div class="line">		i /= 2;</div><div class="line">	}</div><div class="line">	</div><div class="line">	if (cacheIndex == 0)</div><div class="line">		c[blockIdx.x] = cache[0];</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>A. 共享内存方式：</p>
@@ -114,11 +112,11 @@ B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BL
 <p>E. 线程块数量计算分析：<br>有N个数据元素，那么通常只需要N个线程来计算和。但在这里的情况中，线程数量应该为threadsPerBlock的最小整数倍，并且要&gt;=N .<br>因此建议启动线程块数量 == <code>(N + (threadsPerBlock-1))/threadsPerBlock</code><br>即：<br>    <code>dim3    dimBlock(8,8,1);</code><br>    <code>dim3    dimGrid((N1+dimBlock.x-1)/dimBlock.x, (N2+dimBlock.y-1)/dimBlock.y,1);</code></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>title:cuda学习(4)——共享内存<br>date: 2014-11-01 17:52:16</p>
-<h2 id="tags:_cuda">tags: cuda</h2>
-<p>线程协作实例:  &lt;数组和&gt;</p>
-<figure class="hig]]>
+    <![CDATA[<p>线程协作实例:  &lt;数组和&gt;</p>
+<figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</]]>
     </summary>
+    
+      <category term="cuda" scheme="http://niezengying.github.com/tags/cuda/"/>
     
   </entry>
   

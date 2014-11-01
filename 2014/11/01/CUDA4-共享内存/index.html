@@ -4,15 +4,13 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Echo Nie&#39;s Blog</title>
+    <title>CUDA4-共享内存 | Echo Nie&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Ying Nie">
     
-    <meta name="description" content="title:cuda学习(4)——共享内存date: 2014-11-01 17:52:16
-tags: cuda
-线程协作实例:  &amp;lt;数组和&amp;gt;
-123456789101112131415161718__global__ void sum(float *a)            	__">
+    <meta name="description" content="线程协作实例:  &amp;lt;数组和&amp;gt;
+123456789101112131415161718__global__ void sum(float *a)            	__shared__ float cache[threadsPerBlock];	int tid = threadIdx">
     
     
     
@@ -69,15 +67,15 @@ tags: cuda
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/01/CUDA4 共享内存/" title="" itemprop="url"></a>
+      <a href="/2014/11/01/CUDA4-共享内存/" title="CUDA4-共享内存" itemprop="url">CUDA4-共享内存</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://niezengying.github.com" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-11-01T09:52:16.000Z" itemprop="datePublished">11月 1 2014</time>
-    更新日期:<time datetime="2014-11-01T09:53:01.000Z" itemprop="dateModified">11月 1 2014</time>
+    <time datetime="2014-11-01T09:54:15.000Z" itemprop="datePublished">11月 1 2014</time>
+    更新日期:<time datetime="2014-11-01T09:58:01.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -86,12 +84,10 @@ tags: cuda
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#tags:_cuda"><span class="toc-number">1.</span> <span class="toc-text">tags: cuda</span></a></li></ol>
+		
 		</div>
 		
-		<p>title:cuda学习(4)——共享内存<br>date: 2014-11-01 17:52:16</p>
-<h2 id="tags:_cuda">tags: cuda</h2>
-<p>线程协作实例:  &lt;数组和&gt;</p>
+		<p>线程协作实例:  &lt;数组和&gt;</p>
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">__global__ void sum(float *a)            </div><div class="line">	__shared__ float cache[threadsPerBlock];</div><div class="line">	int tid = threadIdx.x + blockIdx.x * blockDim.x;</div><div class="line">	int cacheIndex = threadIdx.x;</div><div class="line">	/*</div><div class="line">		generate the value of cache[];</div><div class="line">	*/</div><div class="line">	int i = blockDim.x/2;</div><div class="line">	while( i != 0 ){</div><div class="line">		if(cacheIndex &lt; i)</div><div class="line">			cache[cacheIndex] += cache [cacheIndex + i ];</div><div class="line">		__syncthreads();</div><div class="line">		i /= 2;</div><div class="line">	}</div><div class="line">	</div><div class="line">	if (cacheIndex == 0)</div><div class="line">		c[blockIdx.x] = cache[0];</div><div class="line">}</div></pre></td></tr></table></figure>
 
 <p>A. 共享内存方式：</p>
@@ -117,12 +113,17 @@ tags: cuda
 	</div>
 		<footer class="article-footer clearfix">
 
+  <div class="article-tags">
+  
+  <span></span> <a href="/tags/cuda/">cuda</a>
+  </div>
+
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://niezengying.github.com/2014/11/01/CUDA4 共享内存/" data-title="Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://niezengying.github.com/2014/11/01/CUDA4-共享内存/" data-title="CUDA4-共享内存 | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -160,7 +161,7 @@ tags: cuda
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#tags:_cuda"><span class="toc-number">1.</span> <span class="toc-text">tags: cuda</span></a></li></ol>
+  
   </div>
 
 <div id="asidepart">
