@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Walk step by step]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://niezengying.github.com/"/>
-  <updated>2014-11-01T09:58:22.860Z</updated>
+  <updated>2014-11-01T10:00:02.050Z</updated>
   <id>http://niezengying.github.com/</id>
   
   <author>
@@ -244,11 +244,11 @@ Offset = X + Y <span class="keyword">*</span>blockDim.x <span class="keyword">*<
   </entry>
   
   <entry>
-    <title><![CDATA[cuda学习(1)——核函数]]></title>
-    <link href="http://niezengying.github.com/2014/10/30/CUDA1%20kernel/"/>
-    <id>http://niezengying.github.com/2014/10/30/CUDA1 kernel/</id>
+    <title><![CDATA[CUDA1-核函数]]></title>
+    <link href="http://niezengying.github.com/2014/10/30/CUDA1-kernel/"/>
+    <id>http://niezengying.github.com/2014/10/30/CUDA1-kernel/</id>
     <published>2014-10-29T17:30:46.000Z</published>
-    <updated>2014-11-01T09:09:54.000Z</updated>
+    <updated>2014-11-01T09:59:51.000Z</updated>
     <content type="html"><![CDATA[<p><strong>前言</strong><br>两个月前，我接下了移植实验室三维重建系统到gpu上执行的任务，以期实现实时重建的效果。现在，我将结合近两个月的学习更新一系列博文，以总结cuda的核心知识点。关于cuda学习资料，我推荐nvidia官方出版的《gpu高性能编程——cuda实战》与《cuda编程指南》两书，本系列博文也将其作为参考。</p>
 <hr>
 <h1 id="cuda简介_">cuda简介 </h1>

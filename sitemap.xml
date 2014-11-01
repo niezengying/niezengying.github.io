@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://niezengying.github.com/2014/10/30/CUDA1-kernel/</loc>
+    <lastmod>2014-11-01T09:59:51.000Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://niezengying.github.com/2014/11/01/CUDA4-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/</loc>
     <lastmod>2014-11-01T09:58:01.000Z</lastmod>
   </url>
@@ -19,11 +24,6 @@
   <url>
     <loc>http://niezengying.github.com/2014/11/01/CUDA2-%E7%BA%BF%E6%80%A7%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/</loc>
     <lastmod>2014-11-01T09:50:10.000Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://niezengying.github.com/2014/10/30/CUDA1%20kernel/</loc>
-    <lastmod>2014-11-01T09:09:54.000Z</lastmod>
   </url>
   
   <url>
