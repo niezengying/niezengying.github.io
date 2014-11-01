@@ -9,10 +9,10 @@
     
     <meta name="author" content="Ying Nie">
     
-    <meta name="description" content="title: cuda学习(4)——共享内存tags: cuda
-date:11/1/2014 5:43:38 PM  
+    <meta name="description" content="title:cuda学习(4)——共享内存date: 2014-11-01 17:52:16
+tags: cuda
 线程协作实例:  &amp;lt;数组和&amp;gt;
-123456789101112131415161718__global__ void sum(float *a)            ">
+123456789101112131415161718__global__ void sum(float *a)            	__">
     
     
     
@@ -76,8 +76,8 @@ date:11/1/2014 5:43:38 PM
       <a href="http://niezengying.github.com" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-11-01T09:28:13.000Z" itemprop="datePublished">11月 1 2014</time>
-    更新日期:<time datetime="2014-11-01T09:43:40.000Z" itemprop="dateModified">11月 1 2014</time>
+    <time datetime="2014-11-01T09:52:16.000Z" itemprop="datePublished">11月 1 2014</time>
+    更新日期:<time datetime="2014-11-01T09:53:01.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -86,11 +86,11 @@ date:11/1/2014 5:43:38 PM
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:43:38_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:43:38 PM  </span></a></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#tags:_cuda"><span class="toc-number">1.</span> <span class="toc-text">tags: cuda</span></a></li></ol>
 		</div>
 		
-		<p>title: cuda学习(4)——共享内存<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:43:38_PM_">date:11/1/2014 5:43:38 PM  </h2>
+		<p>title:cuda学习(4)——共享内存<br>date: 2014-11-01 17:52:16</p>
+<h2 id="tags:_cuda">tags: cuda</h2>
 <p>线程协作实例:  &lt;数组和&gt;</p>
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">__global__ void sum(float *a)            </div><div class="line">	__shared__ float cache[threadsPerBlock];</div><div class="line">	int tid = threadIdx.x + blockIdx.x * blockDim.x;</div><div class="line">	int cacheIndex = threadIdx.x;</div><div class="line">	/*</div><div class="line">		generate the value of cache[];</div><div class="line">	*/</div><div class="line">	int i = blockDim.x/2;</div><div class="line">	while( i != 0 ){</div><div class="line">		if(cacheIndex &lt; i)</div><div class="line">			cache[cacheIndex] += cache [cacheIndex + i ];</div><div class="line">		__syncthreads();</div><div class="line">		i /= 2;</div><div class="line">	}</div><div class="line">	</div><div class="line">	if (cacheIndex == 0)</div><div class="line">		c[blockIdx.x] = cache[0];</div><div class="line">}</div></pre></td></tr></table></figure>
 
@@ -132,18 +132,18 @@ date:11/1/2014 5:43:38 PM
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/11/01/CUDA9 cufft cublas/" title="">
+ <a href="/2014/11/01/CUDA9-cufft-cublas/" title="CUDA9-cufft+blas">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  (no title)</span>
+  CUDA9-cufft+blas</span>
 </a>
 </div>
 
 
 <div class="next">
-<a href="/2014/11/01/CUDA2 线性层次结构/"  title="">
+<a href="/2014/11/01/CUDA3-矢量和/"  title="CUDA3-矢量实例">
  <strong>NEXT:</strong><br/> 
- <span>(no title)
+ <span>CUDA3-矢量实例
 </span>
 </a>
 </div>
@@ -160,7 +160,7 @@ date:11/1/2014 5:43:38 PM
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:43:38_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:43:38 PM  </span></a></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#tags:_cuda"><span class="toc-number">1.</span> <span class="toc-text">tags: cuda</span></a></li></ol>
   </div>
 
 <div id="asidepart">
@@ -173,7 +173,7 @@ date:11/1/2014 5:43:38 PM
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/Other/" style="font-size: NaNpx;">Other</a><a href="/tags/cuda/" style="font-size: NaNpx;">cuda</a>
+       <a href="/tags/CUDA/" style="font-size: 10.00px;">CUDA</a><a href="/tags/Other/" style="font-size: 10.00px;">Other</a><a href="/tags/cuda/" style="font-size: 20.00px;">cuda</a>
     </div>
   </div>
 

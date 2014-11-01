@@ -4,7 +4,7 @@
   <subtitle><![CDATA[Walk step by step]]></subtitle>
   <link href="/atom.xml" rel="self"/>
   <link href="http://niezengying.github.com/"/>
-  <updated>2014-11-01T09:46:22.518Z</updated>
+  <updated>2014-11-01T09:55:32.563Z</updated>
   <id>http://niezengying.github.com/</id>
   
   <author>
@@ -15,11 +15,11 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
-    <title><![CDATA[]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA9%20cufft%20cublas/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA9 cufft cublas/</id>
-    <published>2014-11-01T09:44:26.000Z</published>
-    <updated>2014-11-01T09:45:53.000Z</updated>
+    <title><![CDATA[CUDA9-cufft+blas]]></title>
+    <link href="http://niezengying.github.com/2014/11/01/CUDA9-cufft-cublas/"/>
+    <id>http://niezengying.github.com/2014/11/01/CUDA9-cufft-cublas/</id>
+    <published>2014-11-01T09:54:27.000Z</published>
+    <updated>2014-11-01T09:54:49.000Z</updated>
     <content type="html"><![CDATA[<pre><code>A. cuFFT:   <span class="type">FFT</span>变换库 在实数值与复数值之间进行傅里叶变换
     i. 算法特性：
     ○ 当输入大小能被表示成〖(<span class="number">2</span>〗^a+<span class="number">3</span>^b+<span class="number">5</span>^c+<span class="number">7</span>^d)时算法效率最优，基本因子越小速度越快
@@ -86,10 +86,10 @@ B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BL
     <title><![CDATA[]]></title>
     <link href="http://niezengying.github.com/2014/11/01/CUDA4%20%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/"/>
     <id>http://niezengying.github.com/2014/11/01/CUDA4 共享内存/</id>
-    <published>2014-11-01T09:28:13.000Z</published>
-    <updated>2014-11-01T09:43:40.000Z</updated>
-    <content type="html"><![CDATA[<p>title: cuda学习(4)——共享内存<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:43:38_PM_">date:11/1/2014 5:43:38 PM  </h2>
+    <published>2014-11-01T09:52:16.000Z</published>
+    <updated>2014-11-01T09:53:01.000Z</updated>
+    <content type="html"><![CDATA[<p>title:cuda学习(4)——共享内存<br>date: 2014-11-01 17:52:16</p>
+<h2 id="tags:_cuda">tags: cuda</h2>
 <p>线程协作实例:  &lt;数组和&gt;</p>
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">__global__ void sum(float *a)            </div><div class="line">	__shared__ float cache[threadsPerBlock];</div><div class="line">	int tid = threadIdx.x + blockIdx.x * blockDim.x;</div><div class="line">	int cacheIndex = threadIdx.x;</div><div class="line">	/*</div><div class="line">		generate the value of cache[];</div><div class="line">	*/</div><div class="line">	int i = blockDim.x/2;</div><div class="line">	while( i != 0 ){</div><div class="line">		if(cacheIndex &lt; i)</div><div class="line">			cache[cacheIndex] += cache [cacheIndex + i ];</div><div class="line">		__syncthreads();</div><div class="line">		i /= 2;</div><div class="line">	}</div><div class="line">	</div><div class="line">	if (cacheIndex == 0)</div><div class="line">		c[blockIdx.x] = cache[0];</div><div class="line">}</div></pre></td></tr></table></figure>
 
@@ -114,73 +114,21 @@ B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BL
 <p>E. 线程块数量计算分析：<br>有N个数据元素，那么通常只需要N个线程来计算和。但在这里的情况中，线程数量应该为threadsPerBlock的最小整数倍，并且要&gt;=N .<br>因此建议启动线程块数量 == <code>(N + (threadsPerBlock-1))/threadsPerBlock</code><br>即：<br>    <code>dim3    dimBlock(8,8,1);</code><br>    <code>dim3    dimGrid((N1+dimBlock.x-1)/dimBlock.x, (N2+dimBlock.y-1)/dimBlock.y,1);</code></p>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>title: cuda学习(4)——共享内存<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:43:38_PM_">date:11/1/2014 5:43:38 PM  </h2>
-<p>线程协作实例:  &lt;数组和&gt;</p>]]>
+    <![CDATA[<p>title:cuda学习(4)——共享内存<br>date: 2014-11-01 17:52:16</p>
+<h2 id="tags:_cuda">tags: cuda</h2>
+<p>线程协作实例:  &lt;数组和&gt;</p>
+<figure class="hig]]>
     </summary>
     
   </entry>
   
   <entry>
-    <title><![CDATA[]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA2%20%E7%BA%BF%E6%80%A7%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA2 线性层次结构/</id>
-    <published>2014-11-01T09:07:53.000Z</published>
-    <updated>2014-11-01T09:10:01.000Z</updated>
-    <content type="html"><![CDATA[<p>title: cuda学习(1)——线性层次结构<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:08:34_PM_">date:11/1/2014 5:08:34 PM </h2>
-<pre><code>线程层次：流、 格、块、线程
-
-函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
-结构说明：  （如右图）
-    a. 一个内核函数运行在一个线程格（<span class="keyword">Grid</span>）上；
-    b. 一个线程格(<span class="keyword">Grid</span>)由多个大小相同的线程块(<span class="keyword">Block</span>)组成；
-    c. 而线程块（<span class="keyword">Block</span>）则由多个线程（<span class="keyword">Thread</span>）组成。
-
-变量说明：kernel&lt;&lt;&lt;Dg, Db, ns, s&gt;&gt;&gt;();
-    a. Dg ：指定grid的维度和大小
-        i. 类型: dim3;  最多二维:  blockIdx.x   blockIdx.y
-        ii. Dg.x * Dg.y  == 启动的块数量
-        iii. 第一个blockIdx.x为<span class="number">0</span>；
-        iv. 线程块(<span class="keyword">Block</span>)的数量不超过 <span class="number">65535</span>
-
-    b. Db ：指定block的维度和大小
-        i. 类型: dim3;  最多三维: threadIdx.x threadIdx.y threadIdx.z
-        ii. Gb.x * Db.y * Db.z == 各块的线程数量
-        iii. 线程数不能超过设备属性中 maxThreadsPerBlock域的值
-        通常为 <span class="number">512</span>
-
-    c. Ns：动态分配的共享存储区大小， 可选参数
-    d. S: 指定相关流， 可选参数
-
-内置变量
-gridDim  网格的维度, 即网格（<span class="keyword">Grid</span>）中每一维的线程块（block）数量。
-blockIdx  网格内的块索引
-blockDim 块的维度，保存线程块(<span class="keyword">Block</span>)中 每一维的线程(thread)数量。
-threadIdx 块内的线程索引
-
-索引转换：  add&lt;&lt;&lt;(<span class="keyword">N</span>+<span class="number">127</span>)/<span class="number">128</span>,<span class="number">128</span>&gt;&gt;&gt;(dev_a,dev_b,dev_c)
-</code></pre><p>&lt;&lt;<n,1>&gt;&gt;<br>int tid = blockIdx.x<br>&lt;&lt;<1,n>&gt;&gt;<br>int tid = threadIdx.x<br>&lt;&lt;<1,(n,m)>&gt;&gt;<br>Int tid = threadIdx.x + blockIdx.x <em> blockDim.x<br>&lt;&lt;&lt;(gn,gm),(bn,bm)&gt;&gt;&gt;<br>X = threadIdx.x + blockIdx.x </em> blockDim.x ;<br>Y = threadIdx.y + blockIdx.y* blockDim.y;</1,(n,m)></1,n></n,1></p>
-<p>Offset = X + Y <em>blockDim.x </em> gridDim.x</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p>title: cuda学习(1)——线性层次结构<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:08:34_PM_">date:11/1/2014 5:08:34 PM </h2>
-<pre><code>线程层次：流、 格、块、线程
-]]>
-    </summary>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA3%20%E7%9F%A2%E9%87%8F%E5%92%8C/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA3 矢量和/</id>
-    <published>2014-11-01T09:07:06.000Z</published>
-    <updated>2014-11-01T09:27:35.000Z</updated>
-    <content type="html"><![CDATA[<p>title: cuda学习(3)——矢量和实例<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:10:54_PM_">date:11/1/2014 5:10:54 PM </h2>
-<p>通过前面博文的介绍我们已经对CUDA有一定了解了，相信大家还记得第一篇博文中，代码的矢量和简单实例，在这里我将对其进行丰富，并详细介绍其中的细节。</p>
+    <title><![CDATA[CUDA3-矢量实例]]></title>
+    <link href="http://niezengying.github.com/2014/11/01/CUDA3-%E7%9F%A2%E9%87%8F%E5%92%8C/"/>
+    <id>http://niezengying.github.com/2014/11/01/CUDA3-矢量和/</id>
+    <published>2014-11-01T09:50:53.000Z</published>
+    <updated>2014-11-01T09:51:37.000Z</updated>
+    <content type="html"><![CDATA[<p>通过前面博文的介绍我们已经对CUDA有一定了解了，相信大家还记得第一篇博文中，代码的矢量和简单实例，在这里我将对其进行丰富，并详细介绍其中的细节。</p>
 <p>代码如下：</p>
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add( <span class="keyword">int</span> *a, <span class="keyword">int</span> *b, <span class="keyword">int</span> *c){</div><div class="line">	<span class="keyword">int</span> tid = blockIdx.x;</div><div class="line">	<span class="keyword">if</span>( tid &lt; N )</div><div class="line">		c[ tid ] = a[ tid ] + b[tid];</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">int</span>  main (<span class="keyword">void</span>) {</div><div class="line">	<span class="keyword">int</span> a[N], b[N],c[N];</div><div class="line">	<span class="keyword">int</span> *dev_a, *dev_b, *dev_c;</div><div class="line">	</div><div class="line">	cudaMalloc( (<span class="keyword">void</span> **) &dev_a, N * <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</div><div class="line">	cudaMalloc( (<span class="keyword">void</span>**) &dev_b, N* <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</div><div class="line">	cudaMalloc((<span class="keyword">void</span> **) &dev_c, N *<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</div><div class="line">	</div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i&lt;N; i++ ) {</div><div class="line">		a[i] = -i;</div><div class="line">		b[i] = i * i;</div><div class="line">	}</div><div class="line">	</div><div class="line">	cudaMemcpy( dev_a, a, N*<span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyHostToDevice);</div><div class="line">	cudaMemcpy( dev_b, b, N*<span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyHostToDevice);</div><div class="line">	</div><div class="line">	add&lt;&lt;&lt;N, <span class="number">1</span>&gt;&gt;&gt;(dev_a, dev_b, dev_c);</div><div class="line">	</div><div class="line">	cudaMemcpy(c, dev_c , N * <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyDeviceToHost);</div><div class="line">	</div><div class="line">	cudaFree( dev_a );</div><div class="line">	cudaFree( dev_b );</div><div class="line">	cudaFree( dev_c );</div><div class="line">	</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">}</div></pre></td></tr></table></figure>
 
@@ -226,23 +174,74 @@ threadIdx 块内的线程索引
 </ol>
 ]]></content>
     <summary type="html">
-    <![CDATA[<p>title: cuda学习(3)——矢量和实例<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:10:54_PM_">date:11/1/2014 5:10:54 PM </h2>
-<p>通过前面博文的介绍我们已经对CUDA有一定了解了]]>
+    <![CDATA[<p>通过前面博文的介绍我们已经对CUDA有一定了解了，相信大家还记得第一篇博文中，代码的矢量和简单实例，在这里我将对其进行丰富，并详细介绍其中的细节。</p>
+<p>代码如下：</p>
+<figure class="highlight CUDA"><table><tr><td ]]>
     </summary>
+    
+      <category term="cuda" scheme="http://niezengying.github.com/tags/cuda/"/>
     
   </entry>
   
   <entry>
-    <title><![CDATA[]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/python/"/>
-    <id>http://niezengying.github.com/2014/11/01/python/</id>
-    <published>2014-11-01T09:03:35.000Z</published>
-    <updated>2014-11-01T09:03:35.000Z</updated>
-    <content type="html"><![CDATA[]]></content>
+    <title><![CDATA[CUDA2-线性层次结构]]></title>
+    <link href="http://niezengying.github.com/2014/11/01/CUDA2-%E7%BA%BF%E6%80%A7%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"/>
+    <id>http://niezengying.github.com/2014/11/01/CUDA2-线性层次结构/</id>
+    <published>2014-11-01T09:48:53.000Z</published>
+    <updated>2014-11-01T09:50:10.000Z</updated>
+    <content type="html"><![CDATA[<pre><code>线程层次：流、 格、块、线程
+
+函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
+结构说明：  （如右图）
+    a. 一个内核函数运行在一个线程格（Grid）上；
+    b. 一个线程格(Grid)由多个大小相同的线程块(Block)组成；
+    c. 而线程块（Block）则由多个线程（Thread）组成。
+
+变量说明：kernel<span class="variable">&lt;&lt;&lt;Dg, Db, ns, s&gt;</span>&gt;&gt;();
+    a. Dg ：指定grid的维度和大小
+        i. 类型: dim3;  最多二维:  blockIdx.x   blockIdx.y
+        ii. Dg.x <span class="keyword">*</span> Dg.y  == 启动的块数量
+        iii. 第一个blockIdx.x为0；
+        iv. 线程块(Block)的数量不超过 65535
+
+    b. Db ：指定block的维度和大小
+        i. 类型: dim3;  最多三维: threadIdx.x threadIdx.y threadIdx.z
+        ii. Gb.x <span class="keyword">*</span> Db.y <span class="keyword">*</span> Db.z == 各块的线程数量
+        iii. 线程数不能超过设备属性中 maxThreadsPerBlock域的值
+        通常为 512
+
+    c. Ns：动态分配的共享存储区大小， 可选参数
+    d. S: 指定相关流， 可选参数
+
+内置变量
+gridDim  网格的维度, 即网格（Grid）中每一维的线程块（block）数量。
+blockIdx  网格内的块索引
+blockDim 块的维度，保存线程块(Block)中 每一维的线程(thread)数量。
+threadIdx 块内的线程索引
+
+索引转换：  add<span class="variable">&lt;&lt;&lt;(N+127)/128,128&gt;</span>&gt;&gt;(dev_a,dev_b,dev_c)
+<span class="variable">&lt;&lt;&lt;N,1&gt;</span>&gt;&gt;     
+int tid = blockIdx.x
+<span class="variable">&lt;&lt;&lt;1,N&gt;</span>&gt;&gt;
+int tid = threadIdx.x
+<span class="variable">&lt;&lt;&lt;1,(N,M)&gt;</span>&gt;&gt;
+Int tid = threadIdx.x + blockIdx.x <span class="keyword">*</span> blockDim.x
+<span class="variable">&lt;&lt;&lt;(gn,gm),(bn,bm)&gt;</span>&gt;&gt;
+X = threadIdx.x + blockIdx.x <span class="keyword">*</span> blockDim.x ; 
+Y = threadIdx.y + blockIdx.y<span class="keyword">*</span> blockDim.y;
+
+Offset = X + Y <span class="keyword">*</span>blockDim.x <span class="keyword">*</span> gridDim.x
+</code></pre>]]></content>
     <summary type="html">
-    <![CDATA[]]>
+    <![CDATA[<pre><code>线程层次：流、 格、块、线程
+
+函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
+结构说明：  （如右图）
+    a. 一个内核函数运行在一个线程格（Grid）上；
+    b. 一个线程格(Grid)由多个大小相同的线程]]>
     </summary>
+    
+      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
     
   </entry>
   

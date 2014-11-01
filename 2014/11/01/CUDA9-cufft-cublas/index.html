@@ -4,18 +4,17 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Echo Nie&#39;s Blog</title>
+    <title>CUDA9-cufft+blas | Echo Nie&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Ying Nie">
     
-    <meta name="description" content="title: cuda学习(1)——线性层次结构tags: cuda
-date:11/1/2014 5:08:34 PM 
-线程层次：流、 格、块、线程
-
-函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
-结构说明：  （如右图）
-    a. 一个内核函数运行在一">
+    <meta name="description" content="A. cuFFT:   FFT变换库 在实数值与复数值之间进行傅里叶变换
+    i. 算法特性：
+    ○ 当输入大小能被表示成〖(2〗^a+3^b+5^c+7^d)时算法效率最优，基本因子越小速度越快
+    ○ 算法复杂度Ο(n log⁡n )
+    ○ 单精度比双精度更快
+    ○ 支">
     
     
     
@@ -72,15 +71,15 @@ date:11/1/2014 5:08:34 PM
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/11/01/CUDA2 线性层次结构/" title="" itemprop="url"></a>
+      <a href="/2014/11/01/CUDA9-cufft-cublas/" title="CUDA9-cufft+blas" itemprop="url">CUDA9-cufft+blas</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://niezengying.github.com" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-11-01T09:07:53.000Z" itemprop="datePublished">11月 1 2014</time>
-    更新日期:<time datetime="2014-11-01T09:10:01.000Z" itemprop="dateModified">11月 1 2014</time>
+    <time datetime="2014-11-01T09:54:27.000Z" itemprop="datePublished">11月 1 2014</time>
+    更新日期:<time datetime="2014-11-01T09:54:49.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -89,45 +88,63 @@ date:11/1/2014 5:08:34 PM
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:08:34_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:08:34 PM </span></a></li></ol>
+		
 		</div>
 		
-		<p>title: cuda学习(1)——线性层次结构<br>tags: cuda</p>
-<h2 id="date:11/1/2014_5:08:34_PM_">date:11/1/2014 5:08:34 PM </h2>
-<pre><code>线程层次：流、 格、块、线程
+		<pre><code>A. cuFFT:   <span class="type">FFT</span>变换库 在实数值与复数值之间进行傅里叶变换
+    i. 算法特性：
+    ○ 当输入大小能被表示成〖(<span class="number">2</span>〗^a+<span class="number">3</span>^b+<span class="number">5</span>^c+<span class="number">7</span>^d)时算法效率最优，基本因子越小速度越快
+    ○ 算法复杂度Ο(n log⁡n )
+    ○ 单精度比双精度更快
+    ○ 支持 <span class="type">C2C</span>, <span class="type">R2C</span>, <span class="type">C2R</span>
+    ○ 支持 <span class="number">1</span>D,<span class="number">2</span>D,<span class="number">3</span>D变换
+    ○ ……
 
-函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
-结构说明：  （如右图）
-    a. 一个内核函数运行在一个线程格（<span class="keyword">Grid</span>）上；
-    b. 一个线程格(<span class="keyword">Grid</span>)由多个大小相同的线程块(<span class="keyword">Block</span>)组成；
-    c. 而线程块（<span class="keyword">Block</span>）则由多个线程（<span class="keyword">Thread</span>）组成。
+    ii. 使用方法
+    ○ 创建计划：cufftPlan1D() / cufftPlan2D() / cufftPlan3D() 简单plan
+            cufftPlanMany()  支持多种batched input <span class="keyword">and</span> strided data layout
+    ○ 执行<span class="type">FFT</span>：   cufftExecC2C() / cufftExecZ2Z() 
+            cufftExecR2C() / cufftExecD2Z() 
+            cufftExecC2R() / cufftExecZ2D()
+    ○ 销毁计划：cufftDestroy() 
 
-变量说明：kernel&lt;&lt;&lt;Dg, Db, ns, s&gt;&gt;&gt;();
-    a. Dg ：指定grid的维度和大小
-        i. 类型: dim3;  最多二维:  blockIdx.x   blockIdx.y
-        ii. Dg.x * Dg.y  == 启动的块数量
-        iii. 第一个blockIdx.x为<span class="number">0</span>；
-        iv. 线程块(<span class="keyword">Block</span>)的数量不超过 <span class="number">65535</span>
+    iii. 数据布局：（如图）
 
-    b. Db ：指定block的维度和大小
-        i. 类型: dim3;  最多三维: threadIdx.x threadIdx.y threadIdx.z
-        ii. Gb.x * Db.y * Db.z == 各块的线程数量
-        iii. 线程数不能超过设备属性中 maxThreadsPerBlock域的值
-        通常为 <span class="number">512</span>
 
-    c. Ns：动态分配的共享存储区大小， 可选参数
-    d. S: 指定相关流， 可选参数
 
-内置变量
-gridDim  网格的维度, 即网格（<span class="keyword">Grid</span>）中每一维的线程块（block）数量。
-blockIdx  网格内的块索引
-blockDim 块的维度，保存线程块(<span class="keyword">Block</span>)中 每一维的线程(thread)数量。
-threadIdx 块内的线程索引
+    即，为了保证数据对齐，实数变换为复数，将使规模减半；同时，复数变换为实数，数据规模将增加一倍。
+        其中多余的一到两个单位将作为闲置单元，起调节作用
 
-索引转换：  add&lt;&lt;&lt;(<span class="keyword">N</span>+<span class="number">127</span>)/<span class="number">128</span>,<span class="number">128</span>&gt;&gt;&gt;(dev_a,dev_b,dev_c)
-</code></pre><p>&lt;&lt;<n,1>&gt;&gt;<br>int tid = blockIdx.x<br>&lt;&lt;<1,n>&gt;&gt;<br>int tid = threadIdx.x<br>&lt;&lt;<1,(n,m)>&gt;&gt;<br>Int tid = threadIdx.x + blockIdx.x <em> blockDim.x<br>&lt;&lt;&lt;(gn,gm),(bn,bm)&gt;&gt;&gt;<br>X = threadIdx.x + blockIdx.x </em> blockDim.x ;<br>Y = threadIdx.y + blockIdx.y* blockDim.y;</1,(n,m)></1,n></n,1></p>
-<p>Offset = X + Y <em>blockDim.x </em> gridDim.x</p>
-  
+    <span class="type">HENT</span>&lt;&lt;
+        <span class="type">IFFT</span>( <span class="type">FFT</span>( A ) ) = n A where n <span class="keyword">is</span> the length <span class="keyword">of</span> the vector. <span class="type">The</span> length n <span class="keyword">is</span> <span class="keyword">in</span> number <span class="keyword">of</span> samples (<span class="keyword">not</span> floats <span class="keyword">or</span> bytes). 
+        即： <span class="type">CUDA</span>中矩阵A的正变换的逆变换并不得到矩阵A，它并没有除以数据规模。
+
+
+B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BLAS</span>
+    i. 首先，cuBLAS库使用列主存储方式，并以<span class="number">1</span>开始索引
+    因为C/C++都利用行主存储且通常以<span class="number">0</span>开始索引，因此在处理二维数组时需要尤其注意。
+    <span class="comment">#define IDX2F(i,j,ld) ((((j)-1)*(ld))+((i)-1))</span>
+    <span class="comment">#define IDX2C(i,j,ld) (((j)*(ld))+(i))</span>
+
+    ii. 使用方法：
+    ○ 创建handle:  cublasStatus_t  cublasCreate(cublasHandle_t *handle)
+    ○ 使用cuBlas函数: level-<span class="number">1</span>  level-<span class="number">2</span>  level-<span class="number">3</span>
+    ○ 销毁handle:  cublasStatus_t cublasDestroy(cublasHandle_t handle)
+
+    iii. cublasl&lt;t&gt;amin()  /  cublasI&lt;t&gt;amax ()
+    形式：cublasStatus_t cublasIsamax(cublasHandle_t handle, <span class="type">int</span> n,<span class="keyword">const</span> <span class="type">float</span> *x, <span class="type">int</span> incx, <span class="type">int</span> *<span class="literal">result</span>)
+    功能：the <span class="literal">result</span> <span class="keyword">is</span> the first such that   |real(x[j])|+|imag(x[j])|  <span class="keyword">is</span> maximum <span class="keyword">for</span> j=<span class="number">1</span>+(i−<span class="number">1</span>)∗incx
+    <span class="type">HENT</span>&lt;&lt;
+    使用checkCudaErrors(cublasIzamax(handle_Z_max,width*height, dev_p, <span class="number">1</span>, &amp;idx));
+        “<span class="number">1</span>”表示the stride <span class="keyword">of</span> dev_p，而不应该用sizeof(double2);
+         并且 得到的idx是以<span class="number">1</span>为基的索引值，因此 dev_p(idx - <span class="number">1</span>) 才是实部和虚部和最大的值；
+
+    iv. cublas&lt;t&gt;asum()
+    形式：cublasStatus_t cublasSasum(cublasHandle_t handle, <span class="type">int</span> n, <span class="keyword">const</span> <span class="type">float</span> *x, <span class="type">int</span> incx, <span class="type">float</span> *<span class="literal">result</span>)
+
+
+    功能：求实部和虚部绝对值之和  （类似min/max）
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
 
@@ -136,7 +153,7 @@ threadIdx 块内的线程索引
 
 <div class="article-share" id="share">
 
-  <div data-url="http://niezengying.github.com/2014/11/01/CUDA2 线性层次结构/" data-title="Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://niezengying.github.com/2014/11/01/CUDA9-cufft-cublas/" data-title="CUDA9-cufft+blas | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -145,17 +162,9 @@ threadIdx 块内的线程索引
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/11/01/CUDA4 共享内存/" title="">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  (no title)</span>
-</a>
-</div>
-
 
 <div class="next">
-<a href="/2014/11/01/CUDA3 矢量和/"  title="">
+<a href="/2014/11/01/CUDA4 共享内存/"  title="">
  <strong>NEXT:</strong><br/> 
  <span>(no title)
 </span>
@@ -174,7 +183,7 @@ threadIdx 块内的线程索引
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:08:34_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:08:34 PM </span></a></li></ol>
+  
   </div>
 
 <div id="asidepart">
@@ -187,7 +196,7 @@ threadIdx 块内的线程索引
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/Other/" style="font-size: NaNpx;">Other</a><a href="/tags/cuda/" style="font-size: NaNpx;">cuda</a>
+       <a href="/tags/CUDA/" style="font-size: 10.00px;">CUDA</a><a href="/tags/Other/" style="font-size: 10.00px;">Other</a><a href="/tags/cuda/" style="font-size: 20.00px;">cuda</a>
     </div>
   </div>
 
