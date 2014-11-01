@@ -4,14 +4,18 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>CUDA学习笔记（1） | Echo Nie&#39;s Blog</title>
+    <title>CUDA学习笔记（2） | Echo Nie&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Ying Nie">
     
-    <meta name="description" content="前言
-两个月前，老板交给我一个艰巨的任务：他希望能在三维实时重建方向有所突破，并拟将实验室的几套系统利用GPU并行计算，以期全部实现实时重建。我接下了这个任务，于是进入紧张的CUDA学习和系统改进。
-现在，我将结合近两个月的学习体验,梳理CUDA的核心知识点。我将针对CUDA学习更新一系列博文。学习">
+    <meta name="description" content="上期回顾前面谈到CUDA C和标准C之间的核心区别，也了解了核函数的声明与调用，本篇博文则将介绍CUDA的线程层次结构，并让程序的执行并行起来。
+
+CUDA简介
+核函数(kernel)
+首先我们来看两段代码：
+代码1：标准C
+123456void add(){ }int main (void){	a">
     
     
     
@@ -68,15 +72,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/10/30/CUDA-Learning/" title="CUDA学习笔记（1）" itemprop="url">CUDA学习笔记（1）</a>
+      <a href="/0011/01/20/CUDA Learning2/" title="CUDA学习笔记（2）" itemprop="url">CUDA学习笔记（2）</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://niezengying.github.com" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-10-29T17:30:46.000Z" itemprop="datePublished">10月 30 2014</time>
-    更新日期:<time datetime="2014-10-31T18:26:38.000Z" itemprop="dateModified">11月 1 2014</time>
+    <time datetime="0011-01-19T17:41:58.000Z" itemprop="datePublished">1月 20 0011</time>
+    更新日期:<time datetime="2014-11-01T05:42:10.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -85,16 +89,12 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CUDA简介"><span class="toc-number">2.</span> <span class="toc-text">CUDA简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#核函数(kernel)"><span class="toc-number">2.1.</span> <span class="toc-text">核函数(kernel)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">2.2.</span> <span class="toc-text">参数传递</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CUDA简介"><span class="toc-number">1.</span> <span class="toc-text">CUDA简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#核函数(kernel)"><span class="toc-number">1.1.</span> <span class="toc-text">核函数(kernel)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">1.2.</span> <span class="toc-text">参数传递</span></a></li></ol></li></ol>
 		</div>
 		
-		<h1 id="前言">前言</h1>
-<p>两个月前，老板交给我一个艰巨的任务：他希望能在三维实时重建方向有所突破，并拟将实验室的几套系统利用GPU并行计算，以期全部实现实时重建。我接下了这个任务，于是进入紧张的CUDA学习和系统改进。</p>
-<p>现在，我将结合近两个月的学习体验,梳理CUDA的核心知识点。我将针对CUDA学习更新一系列博文。学习CUDA，我推荐NVIDIA官方出版的《GPU高性能编程——CUDA实战》与《CUDA编程指南》两书，本系列博文也将其作为参考。</p>
+		<p>上期回顾<br>前面谈到CUDA C和标准C之间的核心区别，也了解了核函数的声明与调用，本篇博文则将介绍CUDA的线程层次结构，并让程序的执行并行起来。</p>
 <hr>
 <h1 id="CUDA简介">CUDA简介</h1>
-<p>CUDA架构：NVIDIA推出的通用并行计算架构，它包含了一个统一的着色器流水线，使得执行通用计算的程序能够对芯片上的每个ALU进行排列,也就是每一个ALU单元都可以并行起来进行大规模计算。</p>
-<p>CUDA C则是专门为这种架构设计的编程语言。它基于C语言的，因此只要有C语言基础的同学都能很快上手。</p>
 <h2 id="核函数(kernel)">核函数(kernel)</h2>
 <p>首先我们来看两段代码：</p>
 <p>代码1：<strong><em>标准C</em></strong></p>
@@ -137,7 +137,7 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://niezengying.github.com/2014/10/30/CUDA-Learning/" data-title="CUDA学习笔记（1） | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://niezengying.github.com/0011/01/20/CUDA Learning2/" data-title="CUDA学习笔记（2） | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -146,14 +146,14 @@
 	
 <nav class="article-nav clearfix">
  
-
-<div class="next">
-<a href="/2014/10/30/Hexo Intro/"  title="Hexo Introduction">
- <strong>NEXT:</strong><br/> 
- <span>Hexo Introduction
-</span>
+ <div class="prev" >
+ <a href="/2014/10/30/Hexo Intro/" title="Hexo Introduction">
+  <strong>PREVIOUS:</strong><br/>
+  <span>
+  Hexo Introduction</span>
 </a>
 </div>
+
 
 </nav>
 
@@ -167,7 +167,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#前言"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#CUDA简介"><span class="toc-number">2.</span> <span class="toc-text">CUDA简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#核函数(kernel)"><span class="toc-number">2.1.</span> <span class="toc-text">核函数(kernel)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">2.2.</span> <span class="toc-text">参数传递</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#CUDA简介"><span class="toc-number">1.</span> <span class="toc-text">CUDA简介</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#核函数(kernel)"><span class="toc-number">1.1.</span> <span class="toc-text">核函数(kernel)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#参数传递"><span class="toc-number">1.2.</span> <span class="toc-text">参数传递</span></a></li></ol></li></ol>
   </div>
 
 <div id="asidepart">
@@ -180,7 +180,7 @@
   <div class="tagcloudlist">
     <p class="asidetitle">标签云</p>
     <div class="tagcloudlist clearfix">
-       <a href="/tags/CUDA-C/" style="font-size: NaNpx;">CUDA C</a><a href="/tags/Other/" style="font-size: NaNpx;">Other</a>
+       <a href="/tags/CUDA-C/" style="font-size: NaNpx;">CUDA C</a><a href="/tags/Other/" style="font-size: NaNpx;">Other</a><a href="/tags/cuda-c/" style="font-size: NaNpx;">cuda c</a>
     </div>
   </div>
 
