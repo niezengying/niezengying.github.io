@@ -2,8 +2,33 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>http://niezengying.github.com/2014/10/30/CUDA%20Learning1/</loc>
-    <lastmod>2014-11-01T08:58:12.000Z</lastmod>
+    <loc>http://niezengying.github.com/2014/11/01/CUDA9%20cufft%20cublas/</loc>
+    <lastmod>2014-11-01T09:45:53.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://niezengying.github.com/2014/11/01/CUDA4%20%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/</loc>
+    <lastmod>2014-11-01T09:43:40.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://niezengying.github.com/2014/11/01/CUDA3%20%E7%9F%A2%E9%87%8F%E5%92%8C/</loc>
+    <lastmod>2014-11-01T09:27:35.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://niezengying.github.com/2014/11/01/CUDA2%20%E7%BA%BF%E6%80%A7%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/</loc>
+    <lastmod>2014-11-01T09:10:01.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://niezengying.github.com/2014/10/30/CUDA1%20kernel/</loc>
+    <lastmod>2014-11-01T09:09:54.000Z</lastmod>
+  </url>
+  
+  <url>
+    <loc>http://niezengying.github.com/2014/11/01/python/</loc>
+    <lastmod>2014-11-01T09:03:35.000Z</lastmod>
   </url>
   
   <url>

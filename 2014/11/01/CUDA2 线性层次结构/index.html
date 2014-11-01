@@ -4,12 +4,18 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hexo Introduction | Echo Nie&#39;s Blog</title>
+    <title>Echo Nie&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Ying Nie">
     
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in ">
+    <meta name="description" content="title: cuda学习(1)——线性层次结构tags: cuda
+date:11/1/2014 5:08:34 PM 
+线程层次：流、 格、块、线程
+
+函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
+结构说明：  （如右图）
+    a. 一个内核函数运行在一">
     
     
     
@@ -66,15 +72,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/10/30/Hexo Intro/" title="Hexo Introduction" itemprop="url">Hexo Introduction</a>
+      <a href="/2014/11/01/CUDA2 线性层次结构/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By
     
       <a href="http://niezengying.github.com" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-10-29T16:49:47.000Z" itemprop="datePublished">10月 30 2014</time>
-    更新日期:<time datetime="2014-10-30T06:52:51.000Z" itemprop="dateModified">10月 30 2014</time>
+    <time datetime="2014-11-01T09:07:53.000Z" itemprop="datePublished">11月 1 2014</time>
+    更新日期:<time datetime="2014-11-01T09:10:01.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -83,42 +89,54 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick_Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create_a_new_post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run_server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_static_files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy_to_remote_sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:08:34_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:08:34 PM </span></a></li></ol>
 		</div>
 		
-		<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">trobuleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2>
-<h3 id="Create_a_new_post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+		<p>title: cuda学习(1)——线性层次结构<br>tags: cuda</p>
+<h2 id="date:11/1/2014_5:08:34_PM_">date:11/1/2014 5:08:34 PM </h2>
+<pre><code>线程层次：流、 格、块、线程
 
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
+结构说明：  （如右图）
+    a. 一个内核函数运行在一个线程格（<span class="keyword">Grid</span>）上；
+    b. 一个线程格(<span class="keyword">Grid</span>)由多个大小相同的线程块(<span class="keyword">Block</span>)组成；
+    c. 而线程块（<span class="keyword">Block</span>）则由多个线程（<span class="keyword">Thread</span>）组成。
 
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+变量说明：kernel&lt;&lt;&lt;Dg, Db, ns, s&gt;&gt;&gt;();
+    a. Dg ：指定grid的维度和大小
+        i. 类型: dim3;  最多二维:  blockIdx.x   blockIdx.y
+        ii. Dg.x * Dg.y  == 启动的块数量
+        iii. 第一个blockIdx.x为<span class="number">0</span>；
+        iv. 线程块(<span class="keyword">Block</span>)的数量不超过 <span class="number">65535</span>
 
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
+    b. Db ：指定block的维度和大小
+        i. 类型: dim3;  最多三维: threadIdx.x threadIdx.y threadIdx.z
+        ii. Gb.x * Db.y * Db.z == 各块的线程数量
+        iii. 线程数不能超过设备属性中 maxThreadsPerBlock域的值
+        通常为 <span class="number">512</span>
 
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+    c. Ns：动态分配的共享存储区大小， 可选参数
+    d. S: 指定相关流， 可选参数
+
+内置变量
+gridDim  网格的维度, 即网格（<span class="keyword">Grid</span>）中每一维的线程块（block）数量。
+blockIdx  网格内的块索引
+blockDim 块的维度，保存线程块(<span class="keyword">Block</span>)中 每一维的线程(thread)数量。
+threadIdx 块内的线程索引
+
+索引转换：  add&lt;&lt;&lt;(<span class="keyword">N</span>+<span class="number">127</span>)/<span class="number">128</span>,<span class="number">128</span>&gt;&gt;&gt;(dev_a,dev_b,dev_c)
+</code></pre><p>&lt;&lt;<n,1>&gt;&gt;<br>int tid = blockIdx.x<br>&lt;&lt;<1,n>&gt;&gt;<br>int tid = threadIdx.x<br>&lt;&lt;<1,(n,m)>&gt;&gt;<br>Int tid = threadIdx.x + blockIdx.x <em> blockDim.x<br>&lt;&lt;&lt;(gn,gm),(bn,bm)&gt;&gt;&gt;<br>X = threadIdx.x + blockIdx.x </em> blockDim.x ;<br>Y = threadIdx.y + blockIdx.y* blockDim.y;</1,(n,m)></1,n></n,1></p>
+<p>Offset = X + Y <em>blockDim.x </em> gridDim.x</p>
   
 	</div>
 		<footer class="article-footer clearfix">
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Other/">Other</a>
-  </div>
 
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://niezengying.github.com/2014/10/30/Hexo Intro/" data-title="Hexo Introduction | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://niezengying.github.com/2014/11/01/CUDA2 线性层次结构/" data-title="Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -128,13 +146,21 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/10/30/CUDA1 kernel/" title="cuda学习(1)——核函数">
+ <a href="/2014/11/01/CUDA4 共享内存/" title="">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  cuda学习(1)——核函数</span>
+  (no title)</span>
 </a>
 </div>
 
+
+<div class="next">
+<a href="/2014/11/01/CUDA3 矢量和/"  title="">
+ <strong>NEXT:</strong><br/> 
+ <span>(no title)
+</span>
+</a>
+</div>
 
 </nav>
 
@@ -148,7 +174,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick_Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create_a_new_post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run_server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_static_files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy_to_remote_sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:08:34_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:08:34 PM </span></a></li></ol>
   </div>
 
 <div id="asidepart">

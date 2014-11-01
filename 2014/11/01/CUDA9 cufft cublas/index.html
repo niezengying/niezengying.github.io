@@ -4,12 +4,17 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hexo Introduction | Echo Nie&#39;s Blog</title>
+    <title>Echo Nie&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Ying Nie">
     
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in ">
+    <meta name="description" content="A. cuFFT:   FFT变换库 在实数值与复数值之间进行傅里叶变换
+    i. 算法特性：
+    ○ 当输入大小能被表示成〖(2〗^a+3^b+5^c+7^d)时算法效率最优，基本因子越小速度越快
+    ○ 算法复杂度Ο(n log⁡n )
+    ○ 单精度比双精度更快
+    ○ 支">
     
     
     
@@ -66,15 +71,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/10/30/Hexo Intro/" title="Hexo Introduction" itemprop="url">Hexo Introduction</a>
+      <a href="/2014/11/01/CUDA9 cufft cublas/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By
     
       <a href="http://niezengying.github.com" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-10-29T16:49:47.000Z" itemprop="datePublished">10月 30 2014</time>
-    更新日期:<time datetime="2014-10-30T06:52:51.000Z" itemprop="dateModified">10月 30 2014</time>
+    <time datetime="2014-11-01T09:44:26.000Z" itemprop="datePublished">11月 1 2014</time>
+    更新日期:<time datetime="2014-11-01T09:45:53.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -83,42 +88,72 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick_Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create_a_new_post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run_server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_static_files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy_to_remote_sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+		
 		</div>
 		
-		<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">trobuleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2>
-<h3 id="Create_a_new_post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+		<pre><code>A. cuFFT:   <span class="type">FFT</span>变换库 在实数值与复数值之间进行傅里叶变换
+    i. 算法特性：
+    ○ 当输入大小能被表示成〖(<span class="number">2</span>〗^a+<span class="number">3</span>^b+<span class="number">5</span>^c+<span class="number">7</span>^d)时算法效率最优，基本因子越小速度越快
+    ○ 算法复杂度Ο(n log⁡n )
+    ○ 单精度比双精度更快
+    ○ 支持 <span class="type">C2C</span>, <span class="type">R2C</span>, <span class="type">C2R</span>
+    ○ 支持 <span class="number">1</span>D,<span class="number">2</span>D,<span class="number">3</span>D变换
+    ○ ……
 
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
+    ii. 使用方法
+    ○ 创建计划：cufftPlan1D() / cufftPlan2D() / cufftPlan3D() 简单plan
+            cufftPlanMany()  支持多种batched input <span class="keyword">and</span> strided data layout
+    ○ 执行<span class="type">FFT</span>：   cufftExecC2C() / cufftExecZ2Z() 
+            cufftExecR2C() / cufftExecD2Z() 
+            cufftExecC2R() / cufftExecZ2D()
+    ○ 销毁计划：cufftDestroy() 
 
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
+    iii. 数据布局：（如图）
 
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
 
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
-  
+
+    即，为了保证数据对齐，实数变换为复数，将使规模减半；同时，复数变换为实数，数据规模将增加一倍。
+        其中多余的一到两个单位将作为闲置单元，起调节作用
+
+    <span class="type">HENT</span>&lt;&lt;
+        <span class="type">IFFT</span>( <span class="type">FFT</span>( A ) ) = n A where n <span class="keyword">is</span> the length <span class="keyword">of</span> the vector. <span class="type">The</span> length n <span class="keyword">is</span> <span class="keyword">in</span> number <span class="keyword">of</span> samples (<span class="keyword">not</span> floats <span class="keyword">or</span> bytes). 
+        即： <span class="type">CUDA</span>中矩阵A的正变换的逆变换并不得到矩阵A，它并没有除以数据规模。
+
+
+B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BLAS</span>
+    i. 首先，cuBLAS库使用列主存储方式，并以<span class="number">1</span>开始索引
+    因为C/C++都利用行主存储且通常以<span class="number">0</span>开始索引，因此在处理二维数组时需要尤其注意。
+    <span class="comment">#define IDX2F(i,j,ld) ((((j)-1)*(ld))+((i)-1))</span>
+    <span class="comment">#define IDX2C(i,j,ld) (((j)*(ld))+(i))</span>
+
+    ii. 使用方法：
+    ○ 创建handle:  cublasStatus_t  cublasCreate(cublasHandle_t *handle)
+    ○ 使用cuBlas函数: level-<span class="number">1</span>  level-<span class="number">2</span>  level-<span class="number">3</span>
+    ○ 销毁handle:  cublasStatus_t cublasDestroy(cublasHandle_t handle)
+
+    iii. cublasl&lt;t&gt;amin()  /  cublasI&lt;t&gt;amax ()
+    形式：cublasStatus_t cublasIsamax(cublasHandle_t handle, <span class="type">int</span> n,<span class="keyword">const</span> <span class="type">float</span> *x, <span class="type">int</span> incx, <span class="type">int</span> *<span class="literal">result</span>)
+    功能：the <span class="literal">result</span> <span class="keyword">is</span> the first such that   |real(x[j])|+|imag(x[j])|  <span class="keyword">is</span> maximum <span class="keyword">for</span> j=<span class="number">1</span>+(i−<span class="number">1</span>)∗incx
+    <span class="type">HENT</span>&lt;&lt;
+    使用checkCudaErrors(cublasIzamax(handle_Z_max,width*height, dev_p, <span class="number">1</span>, &amp;idx));
+        “<span class="number">1</span>”表示the stride <span class="keyword">of</span> dev_p，而不应该用sizeof(double2);
+         并且 得到的idx是以<span class="number">1</span>为基的索引值，因此 dev_p(idx - <span class="number">1</span>) 才是实部和虚部和最大的值；
+
+    iv. cublas&lt;t&gt;asum()
+    形式：cublasStatus_t cublasSasum(cublasHandle_t handle, <span class="type">int</span> n, <span class="keyword">const</span> <span class="type">float</span> *x, <span class="type">int</span> incx, <span class="type">float</span> *<span class="literal">result</span>)
+
+
+    功能：求实部和虚部绝对值之和  （类似min/max）
+</code></pre>  
 	</div>
 		<footer class="article-footer clearfix">
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Other/">Other</a>
-  </div>
 
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://niezengying.github.com/2014/10/30/Hexo Intro/" data-title="Hexo Introduction | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://niezengying.github.com/2014/11/01/CUDA9 cufft cublas/" data-title="Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -127,14 +162,14 @@
 	
 <nav class="article-nav clearfix">
  
- <div class="prev" >
- <a href="/2014/10/30/CUDA1 kernel/" title="cuda学习(1)——核函数">
-  <strong>PREVIOUS:</strong><br/>
-  <span>
-  cuda学习(1)——核函数</span>
+
+<div class="next">
+<a href="/2014/11/01/CUDA4 共享内存/"  title="">
+ <strong>NEXT:</strong><br/> 
+ <span>(no title)
+</span>
 </a>
 </div>
-
 
 </nav>
 
@@ -148,7 +183,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick_Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create_a_new_post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run_server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_static_files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy_to_remote_sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+  
   </div>
 
 <div id="asidepart">

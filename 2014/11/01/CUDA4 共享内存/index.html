@@ -4,12 +4,15 @@
 <head>
   <meta charset="UTF-8">
   
-    <title>Hexo Introduction | Echo Nie&#39;s Blog</title>
+    <title>Echo Nie&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Ying Nie">
     
-    <meta name="description" content="Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in ">
+    <meta name="description" content="title: cuda学习(4)——共享内存tags: cuda
+date:11/1/2014 5:43:38 PM  
+线程协作实例:  &amp;lt;数组和&amp;gt;
+123456789101112131415161718__global__ void sum(float *a)            ">
     
     
     
@@ -66,15 +69,15 @@
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/2014/10/30/Hexo Intro/" title="Hexo Introduction" itemprop="url">Hexo Introduction</a>
+      <a href="/2014/11/01/CUDA4 共享内存/" title="" itemprop="url"></a>
   </h1>
   <p class="article-author">By
     
       <a href="http://niezengying.github.com" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="2014-10-29T16:49:47.000Z" itemprop="datePublished">10月 30 2014</time>
-    更新日期:<time datetime="2014-10-30T06:52:51.000Z" itemprop="dateModified">10月 30 2014</time>
+    <time datetime="2014-11-01T09:28:13.000Z" itemprop="datePublished">11月 1 2014</time>
+    更新日期:<time datetime="2014-11-01T09:43:40.000Z" itemprop="dateModified">11月 1 2014</time>
     
   </p>
 </header>
@@ -83,42 +86,43 @@
 		
 		<div id="toc" class="toc-article">
 			<strong class="toc-title">文章目录</strong>
-		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick_Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create_a_new_post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run_server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_static_files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy_to_remote_sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+		<ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:43:38_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:43:38 PM  </span></a></li></ol>
 		</div>
 		
-		<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">trobuleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
-<h2 id="Quick_Start">Quick Start</h2>
-<h3 id="Create_a_new_post">Create a new post</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo new <span class="string">"My New Post"</span></div></pre></td></tr></table></figure>
+		<p>title: cuda学习(4)——共享内存<br>tags: cuda</p>
+<h2 id="date:11/1/2014_5:43:38_PM_">date:11/1/2014 5:43:38 PM  </h2>
+<p>线程协作实例:  &lt;数组和&gt;</p>
+<figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">__global__ void sum(float *a)            </div><div class="line">	__shared__ float cache[threadsPerBlock];</div><div class="line">	int tid = threadIdx.x + blockIdx.x * blockDim.x;</div><div class="line">	int cacheIndex = threadIdx.x;</div><div class="line">	/*</div><div class="line">		generate the value of cache[];</div><div class="line">	*/</div><div class="line">	int i = blockDim.x/2;</div><div class="line">	while( i != 0 ){</div><div class="line">		if(cacheIndex &lt; i)</div><div class="line">			cache[cacheIndex] += cache [cacheIndex + i ];</div><div class="line">		__syncthreads();</div><div class="line">		i /= 2;</div><div class="line">	}</div><div class="line">	</div><div class="line">	if (cacheIndex == 0)</div><div class="line">		c[blockIdx.x] = cache[0];</div><div class="line">}</div></pre></td></tr></table></figure>
 
-<p>More info: <a href="http://hexo.io/docs/writing.html" target="_blank" rel="external">Writing</a></p>
-<h3 id="Run_server">Run server</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo server</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/server.html" target="_blank" rel="external">Server</a></p>
-<h3 id="Generate_static_files">Generate static files</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo generate</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/generating.html" target="_blank" rel="external">Generating</a></p>
-<h3 id="Deploy_to_remote_sites">Deploy to remote sites</h3>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">$ hexo deploy</div></pre></td></tr></table></figure>
-
-<p>More info: <a href="http://hexo.io/docs/deployment.html" target="_blank" rel="external">Deployment</a></p>
+<p>A. 共享内存方式：</p>
+<ul>
+<li>关键字<strong>share</strong>  float cache[threadsPerBlock];         //相当于在标准C中声明一个static类型的变量</li>
+<li>对于GPU上启动的每个线程块，CUDA C编译器都将创建该变量的一个副本。线程块中的每个线程都共享这块线程。但线程却无法看到也不能修改其他线程块的变量副本。</li>
+<li>共享内存缓冲区驻留在物理GPU上，而不是系统内存；大大降低了访问延迟。</li>
+<li><strong>syncthreads</strong>();  用以保证线程块中的每个线程：都执行完__syncthreads()前面的语句, 才进行后面的语句。</li>
+</ul>
+<p>B. 代码基本思想：<br>每个线程将cache[]中的两个值相加起来，然后将结果保存回cache[]。由于每个线程都将两个值合并为一个值，那么在完成这个步骤后，得到的结果数量就是计算开始数值数量的一半，如此重复。</p>
+<p>C. 为什么只有cacheIndex == 0的线程执行保存操作？</p>
+<ul>
+<li>因为只有一个值需要写入内存，因此只需要一个线程来执行这个操作。</li>
+</ul>
+<p>D. 思路总结：  </p>
+<ul>
+<li>为输入数组和输出数组分配主机内存和设备内存</li>
+<li>填充输入数组a[],b[],然后通过cudaMemcpy()将它们复制到设备上。</li>
+<li>在调用计算数组和的核函数时指定线程格中线程块的数量以及每个线程块中的线程数量。</li>
+</ul>
+<p>E. 线程块数量计算分析：<br>有N个数据元素，那么通常只需要N个线程来计算和。但在这里的情况中，线程数量应该为threadsPerBlock的最小整数倍，并且要&gt;=N .<br>因此建议启动线程块数量 == <code>(N + (threadsPerBlock-1))/threadsPerBlock</code><br>即：<br>    <code>dim3    dimBlock(8,8,1);</code><br>    <code>dim3    dimGrid((N1+dimBlock.x-1)/dimBlock.x, (N2+dimBlock.y-1)/dimBlock.y,1);</code></p>
   
 	</div>
 		<footer class="article-footer clearfix">
-
-  <div class="article-tags">
-  
-  <span></span> <a href="/tags/Other/">Other</a>
-  </div>
 
 
 
 
 <div class="article-share" id="share">
 
-  <div data-url="http://niezengying.github.com/2014/10/30/Hexo Intro/" data-title="Hexo Introduction | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://niezengying.github.com/2014/11/01/CUDA4 共享内存/" data-title="Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
@@ -128,13 +132,21 @@
 <nav class="article-nav clearfix">
  
  <div class="prev" >
- <a href="/2014/10/30/CUDA1 kernel/" title="cuda学习(1)——核函数">
+ <a href="/2014/11/01/CUDA9 cufft cublas/" title="">
   <strong>PREVIOUS:</strong><br/>
   <span>
-  cuda学习(1)——核函数</span>
+  (no title)</span>
 </a>
 </div>
 
+
+<div class="next">
+<a href="/2014/11/01/CUDA2 线性层次结构/"  title="">
+ <strong>NEXT:</strong><br/> 
+ <span>(no title)
+</span>
+</a>
+</div>
 
 </nav>
 
@@ -148,7 +160,7 @@
 
   <div id="toc" class="toc-aside">
   <strong class="toc-title">文章目录</strong>
-  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Quick_Start"><span class="toc-number">1.</span> <span class="toc-text">Quick Start</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Create_a_new_post"><span class="toc-number">1.1.</span> <span class="toc-text">Create a new post</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Run_server"><span class="toc-number">1.2.</span> <span class="toc-text">Run server</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Generate_static_files"><span class="toc-number">1.3.</span> <span class="toc-text">Generate static files</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Deploy_to_remote_sites"><span class="toc-number">1.4.</span> <span class="toc-text">Deploy to remote sites</span></a></li></ol></li></ol>
+  <ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#date:11/1/2014_5:43:38_PM_"><span class="toc-number">1.</span> <span class="toc-text">date:11/1/2014 5:43:38 PM  </span></a></li></ol>
   </div>
 
 <div id="asidepart">
