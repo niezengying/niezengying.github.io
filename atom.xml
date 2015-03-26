@@ -3,9 +3,9 @@
   <title><![CDATA[Echo Nie's Blog]]></title>
   <subtitle><![CDATA[Walk step by step]]></subtitle>
   <link href="/atom.xml" rel="self"/>
-  <link href="http://niezengying.github.com/"/>
-  <updated>2014-11-01T10:00:02.050Z</updated>
-  <id>http://niezengying.github.com/</id>
+  <link href="http://niezengying.github.com/blog/"/>
+  <updated>2015-03-26T11:27:31.056Z</updated>
+  <id>http://niezengying.github.com/blog/</id>
   
   <author>
     <name><![CDATA[Ying Nie]]></name>
@@ -15,11 +15,84 @@
   <generator uri="http://zespia.tw/hexo/">Hexo</generator>
   
   <entry>
+    <title><![CDATA[new hexo]]></title>
+    <link href="http://niezengying.github.com/blog/2015/03/26/new-hexo/"/>
+    <id>http://niezengying.github.com/blog/2015/03/26/new-hexo/</id>
+    <published>2015-03-26T11:27:21.000Z</published>
+    <updated>2015-03-26T11:27:21.796Z</updated>
+    <content type="html"><![CDATA[]]></content>
+    <summary type="html">
+    <![CDATA[]]>
+    </summary>
+    
+  </entry>
+  
+  <entry>
+    <title><![CDATA[CUDA1-核函数]]></title>
+    <link href="http://niezengying.github.com/blog/2014/11/01/CUDA1-kernel/"/>
+    <id>http://niezengying.github.com/blog/2014/11/01/CUDA1-kernel/</id>
+    <published>2014-11-01T09:59:51.323Z</published>
+    <updated>2014-11-01T09:59:51.323Z</updated>
+    <content type="html"><![CDATA[<p><strong>前言</strong><br>两个月前，我接下了移植实验室三维重建系统到gpu上执行的任务，以期实现实时重建的效果。现在，我将结合近两个月的学习更新一系列博文，以总结cuda的核心知识点。关于cuda学习资料，我推荐nvidia官方出版的《gpu高性能编程——cuda实战》与《cuda编程指南》两书，本系列博文也将其作为参考。</p>
+<hr>
+<h1 id="cuda简介_">cuda简介 </h1>
+<p><strong>cuda架构</strong>：是nvidia推出的通用并行计算架构，它包含了一个统一的着色器流水线，使得执行通用计算的程序能够对芯片上的每个alu进行排列,也就是每一个alu单元都可以并行起来进行大规模计算。<br><strong>cuda c</strong>：则是专门为这种架构设计的编程语言。它基于c语言的，因此只要有c语言基础的同学都能很快上手。<br><strong>编程模型</strong>：cuda允许程序员定义成为内核（kernel）的c语言函数，在调用此类函数时，他将<strong>由n个不同的cuda线程并行执行n次</strong>。</p>
+<hr>
+<h1 id="核函数(kernel)_">核函数(kernel) </h1>
+<h2 id="声明与调用">声明与调用</h2>
+<p>首先我们来看两段代码：</p>
+<p>代码1：<strong><em>标准c</em></strong></p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> add(){ }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	add();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+
+
+<p>代码2：<strong><em>cuda c</em></strong></p>
+<figure class="highlight cuda"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add_kernel(){ }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	add_kernel&lt;&lt;&lt;<span class="number">1</span>,n&gt;&gt;&gt;(); <span class="comment">//kernel</span></div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>这两段代码，有两个有区别的地方：</p>
+<ul>
+<li>kernel函数<code>add_kernel()</code>定义时,带有修饰符<code>__global__</code>;</li>
+<li>该函数调用时，带有修饰符<code>&lt;&lt;&lt;1,n&gt;&gt;&gt;</code>。</li>
+</ul>
+<p>区别解释：</p>
+<ul>
+<li><code>__global__</code>声明说明符，表示该函数在gpu上运行，属于设备代码；</li>
+<li><code>&lt;&lt;&lt;1,n&gt;&gt;&gt;</code>修饰符，则告诉gpu如何调用设备代码，指定每次并行的cuda线程数。</li>
+</ul>
+<p>其实cuda c就是这么简单，它将设备代码传给nvcc编译，其它代码则交给主机编译器。对主机来说，cuda就这样变成透明的了，是不是很机智？</p>
+<hr>
+<h2 id="参数传递">参数传递</h2>
+<p>根据以上说明，初步了解了kernel的声明与调用, 那么应该如何传递参数给核函数呢？</p>
+<p>问1：<strong>如何传递参数给核函数呢？</strong><br>答1： 可以<strong>像c函数一样将参数传递给核函数</strong>，但<strong>kernel中只能调用显存中的数据</strong>。因此我们必须为任何有用数据分配显存空间，并将返回值传给主机。</p>
+<p>代码3：<strong><em>带参数的cuda c</em></strong></p>
+<figure class="highlight cuda"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add_kernel(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> *c){</div><div class="line">	<span class="keyword">int</span> i = threadidx.x；</div><div class="line">	c[i] = a[i] + b[i] ;</div><div class="line"> }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	<span class="keyword">int</span> h_c;</div><div class="line">	<span class="keyword">int</span> *dev_c;</div><div class="line">	cudamalloc((<span class="keyword">void</span>**)&dev_c, <span class="keyword">sizeof</span>(<span class="keyword">int</span>)); <span class="comment">//分配显存空间</span></div><div class="line">	</div><div class="line">	add_kernel&lt;&lt;&lt;<span class="number">1</span>,n&gt;&gt;&gt;（dev_a, dev_b, dev_c); <span class="comment">//假设dev_a, dev_b已赋值</span></div><div class="line"></div><div class="line">	cudamemcpy(&h_c, dev_c, <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudamemcpydevicetohost); <span class="comment">//将显存数据传回主机	</span></div><div class="line">	cudafree(dev_c);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
+
+<p>代码3的作用是，将大小为n的向量a和向量b相加，并将结果存入c。main函数里多了三行代码<code>cudamalloc()/cudafree()</code>和<code>cudamemcpy()</code>;它们均是cuda提供的标准函数，分别负责<strong>分配/设备设备空间</strong>和<strong>主机与设备的数据交换</strong>。</p>
+<p><strong>函数原型：</strong><br><code>cudaerror_t cudamalloc(void** devptr, size_t count);</code><br><code>cudaerror_t cudafree(void* devptr);</code><br><code>cudaerror_t cudamemcpy(void* dst, const void* src, size_t count, enum cudamemcpykind kind);</code><br>说明：<code>cudamemcpy()</code>从src指向的存储器区域将count个字符复制到dst指向的区域；<br>其中kind是<code>cudamemcpyhosttohost</code>、<code>udamemcpyhosttodevice</code>、<code>cudamemcpydevicetohost</code>或<code>cudamemcpydevicetodevice</code>之一。</p>
+<hr>
+<h2 id="线程并行">线程并行</h2>
+<p>学到这里，我们已经知道如何声明和调用核函数了，并且已经能正确传递参数给它，但依然有个问题待解决。</p>
+<p>问2：<strong>应该如何定义核函数，以使线程并行执行并准确获取所需参数呢？</strong><br>答2：执行内核的每个线程都会被分配一个独特的线程id，可通过内置的threadidx变量在内核中访问此id。我们可以利用线程id去该线程索引所需的参数值；</p>
+<p>依然以代码3为例，<code>add_kernel()</code>实际所做的工作也就是将a,b两组数据的对应元素两两相加。该函数中的代码:<br><code>int i = threadidx.x</code>作用在于获取线程id(以0开始计数)；<br><code>c[i] = a[i] + b[i]</code>则表示，每个线程将线程id作为索引号，获取该线程对应处理的元素；<br>这样就能使n个线程并行起来，每个线程实现其中一组元素的加法操作，从而避免单线程循环n次计算，大大提高运算速度。</p>
+<hr>
+<h1 id="总结">总结</h1>
+<p>总结起来，<br><strong>编程模型</strong>： 定义称为kernel的c语言函数，kernel将有n个不同的cuda线程并行执行n次；<br><strong>声明与调用</strong>： <code>__global__ void kernel ( void ){};</code><br>            <code>kernel&lt;&lt;&lt;...&gt;&gt;&gt; (); //&lt;&lt;&lt;...&gt;&gt;&gt; 指定每次调用的cuda线程数。</code><br><strong>参数传递</strong>：核函数与c函数参数传递形式一样，但核函数参数必须为设备存储区域的数据。<br><strong>线程并行</strong>：每个线程利用线程id去索引合适的元素进行计算。</p>
+<p>如果看到这里，对并行编程还不太明白，没关系。我将在下一篇博文详细介绍cuda并行编程以及线程层次结构。</p>
+]]></content>
+    <summary type="html">
+    <![CDATA[<p><strong>前言</strong><br>两个月前，我接下了移植实验室三维重建系统到gpu上执行的任务，以期实现实时重建的效果。现在，我将结合近两个月的学习更新一系列博文，以总结cuda的核心知识点。关于cuda学习资料，我推荐nvidia官方出版的《gpu高性能编程—]]>
+    </summary>
+    
+      <category term="cuda" scheme="http://niezengying.github.com/blog/tags/cuda/"/>
+    
+  </entry>
+  
+  <entry>
     <title><![CDATA[CUDA9-cufft+blas]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA9-cufft-cublas/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA9-cufft-cublas/</id>
+    <link href="http://niezengying.github.com/blog/2014/11/01/CUDA9-cufft-cublas/"/>
+    <id>http://niezengying.github.com/blog/2014/11/01/CUDA9-cufft-cublas/</id>
     <published>2014-11-01T09:54:27.000Z</published>
-    <updated>2014-11-01T09:54:49.000Z</updated>
+    <updated>2014-11-01T09:54:49.272Z</updated>
     <content type="html"><![CDATA[<pre><code>A. cuFFT:   <span class="type">FFT</span>变换库 在实数值与复数值之间进行傅里叶变换
     i. 算法特性：
     ○ 当输入大小能被表示成〖(<span class="number">2</span>〗^a+<span class="number">3</span>^b+<span class="number">5</span>^c+<span class="number">7</span>^d)时算法效率最优，基本因子越小速度越快
@@ -84,10 +157,10 @@ B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BL
   
   <entry>
     <title><![CDATA[CUDA4-共享内存]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA4-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA4-共享内存/</id>
+    <link href="http://niezengying.github.com/blog/2014/11/01/CUDA4-%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98/"/>
+    <id>http://niezengying.github.com/blog/2014/11/01/CUDA4-共享内存/</id>
     <published>2014-11-01T09:54:15.000Z</published>
-    <updated>2014-11-01T09:58:01.000Z</updated>
+    <updated>2014-11-01T09:58:01.337Z</updated>
     <content type="html"><![CDATA[<p>线程协作实例:  &lt;数组和&gt;</p>
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">__global__ void sum(float *a)            </div><div class="line">	__shared__ float cache[threadsPerBlock];</div><div class="line">	int tid = threadIdx.x + blockIdx.x * blockDim.x;</div><div class="line">	int cacheIndex = threadIdx.x;</div><div class="line">	/*</div><div class="line">		generate the value of cache[];</div><div class="line">	*/</div><div class="line">	int i = blockDim.x/2;</div><div class="line">	while( i != 0 ){</div><div class="line">		if(cacheIndex &lt; i)</div><div class="line">			cache[cacheIndex] += cache [cacheIndex + i ];</div><div class="line">		__syncthreads();</div><div class="line">		i /= 2;</div><div class="line">	}</div><div class="line">	</div><div class="line">	if (cacheIndex == 0)</div><div class="line">		c[blockIdx.x] = cache[0];</div><div class="line">}</div></pre></td></tr></table></figure>
 
@@ -116,16 +189,16 @@ B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BL
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</]]>
     </summary>
     
-      <category term="cuda" scheme="http://niezengying.github.com/tags/cuda/"/>
+      <category term="cuda" scheme="http://niezengying.github.com/blog/tags/cuda/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[CUDA3-矢量实例]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA3-%E7%9F%A2%E9%87%8F%E5%92%8C/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA3-矢量和/</id>
+    <link href="http://niezengying.github.com/blog/2014/11/01/CUDA3-%E7%9F%A2%E9%87%8F%E5%92%8C/"/>
+    <id>http://niezengying.github.com/blog/2014/11/01/CUDA3-矢量和/</id>
     <published>2014-11-01T09:50:53.000Z</published>
-    <updated>2014-11-01T09:51:37.000Z</updated>
+    <updated>2014-11-01T09:51:37.024Z</updated>
     <content type="html"><![CDATA[<p>通过前面博文的介绍我们已经对CUDA有一定了解了，相信大家还记得第一篇博文中，代码的矢量和简单实例，在这里我将对其进行丰富，并详细介绍其中的细节。</p>
 <p>代码如下：</p>
 <figure class="highlight CUDA"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add( <span class="keyword">int</span> *a, <span class="keyword">int</span> *b, <span class="keyword">int</span> *c){</div><div class="line">	<span class="keyword">int</span> tid = blockIdx.x;</div><div class="line">	<span class="keyword">if</span>( tid &lt; N )</div><div class="line">		c[ tid ] = a[ tid ] + b[tid];</div><div class="line">}</div><div class="line"></div><div class="line"><span class="keyword">int</span>  main (<span class="keyword">void</span>) {</div><div class="line">	<span class="keyword">int</span> a[N], b[N],c[N];</div><div class="line">	<span class="keyword">int</span> *dev_a, *dev_b, *dev_c;</div><div class="line">	</div><div class="line">	cudaMalloc( (<span class="keyword">void</span> **) &dev_a, N * <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</div><div class="line">	cudaMalloc( (<span class="keyword">void</span>**) &dev_b, N* <span class="keyword">sizeof</span>(<span class="keyword">int</span>));</div><div class="line">	cudaMalloc((<span class="keyword">void</span> **) &dev_c, N *<span class="keyword">sizeof</span>(<span class="keyword">int</span>));</div><div class="line">	</div><div class="line">	<span class="keyword">for</span>(<span class="keyword">int</span> i = <span class="number">0</span>; i&lt;N; i++ ) {</div><div class="line">		a[i] = -i;</div><div class="line">		b[i] = i * i;</div><div class="line">	}</div><div class="line">	</div><div class="line">	cudaMemcpy( dev_a, a, N*<span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyHostToDevice);</div><div class="line">	cudaMemcpy( dev_b, b, N*<span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyHostToDevice);</div><div class="line">	</div><div class="line">	add&lt;&lt;&lt;N, <span class="number">1</span>&gt;&gt;&gt;(dev_a, dev_b, dev_c);</div><div class="line">	</div><div class="line">	cudaMemcpy(c, dev_c , N * <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudaMemcpyDeviceToHost);</div><div class="line">	</div><div class="line">	cudaFree( dev_a );</div><div class="line">	cudaFree( dev_b );</div><div class="line">	cudaFree( dev_c );</div><div class="line">	</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">}</div></pre></td></tr></table></figure>
@@ -177,16 +250,16 @@ B. <span class="type">CUBLAS</span>： 线性代数函数  <span class="type">BL
 <figure class="highlight CUDA"><table><tr><td ]]>
     </summary>
     
-      <category term="cuda" scheme="http://niezengying.github.com/tags/cuda/"/>
+      <category term="cuda" scheme="http://niezengying.github.com/blog/tags/cuda/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[CUDA2-线性层次结构]]></title>
-    <link href="http://niezengying.github.com/2014/11/01/CUDA2-%E7%BA%BF%E6%80%A7%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"/>
-    <id>http://niezengying.github.com/2014/11/01/CUDA2-线性层次结构/</id>
+    <link href="http://niezengying.github.com/blog/2014/11/01/CUDA2-%E7%BA%BF%E6%80%A7%E5%B1%82%E6%AC%A1%E7%BB%93%E6%9E%84/"/>
+    <id>http://niezengying.github.com/blog/2014/11/01/CUDA2-线性层次结构/</id>
     <published>2014-11-01T09:48:53.000Z</published>
-    <updated>2014-11-01T09:50:10.000Z</updated>
+    <updated>2014-11-01T09:50:10.634Z</updated>
     <content type="html"><![CDATA[<pre><code>线程层次：流、 格、块、线程
 
 函数并行：一个核函数由多个线程并行执行，每个线程执行相同工作，并且有唯一线程ID。
@@ -239,76 +312,16 @@ Offset = X + Y <span class="keyword">*</span>blockDim.x <span class="keyword">*<
     b. 一个线程格(Grid)由多个大小相同的线程]]>
     </summary>
     
-      <category term="CUDA" scheme="http://niezengying.github.com/tags/CUDA/"/>
-    
-  </entry>
-  
-  <entry>
-    <title><![CDATA[CUDA1-核函数]]></title>
-    <link href="http://niezengying.github.com/2014/10/30/CUDA1-kernel/"/>
-    <id>http://niezengying.github.com/2014/10/30/CUDA1-kernel/</id>
-    <published>2014-10-29T17:30:46.000Z</published>
-    <updated>2014-11-01T09:59:51.000Z</updated>
-    <content type="html"><![CDATA[<p><strong>前言</strong><br>两个月前，我接下了移植实验室三维重建系统到gpu上执行的任务，以期实现实时重建的效果。现在，我将结合近两个月的学习更新一系列博文，以总结cuda的核心知识点。关于cuda学习资料，我推荐nvidia官方出版的《gpu高性能编程——cuda实战》与《cuda编程指南》两书，本系列博文也将其作为参考。</p>
-<hr>
-<h1 id="cuda简介_">cuda简介 </h1>
-<p><strong>cuda架构</strong>：是nvidia推出的通用并行计算架构，它包含了一个统一的着色器流水线，使得执行通用计算的程序能够对芯片上的每个alu进行排列,也就是每一个alu单元都可以并行起来进行大规模计算。<br><strong>cuda c</strong>：则是专门为这种架构设计的编程语言。它基于c语言的，因此只要有c语言基础的同学都能很快上手。<br><strong>编程模型</strong>：cuda允许程序员定义成为内核（kernel）的c语言函数，在调用此类函数时，他将<strong>由n个不同的cuda线程并行执行n次</strong>。</p>
-<hr>
-<h1 id="核函数(kernel)_">核函数(kernel) </h1>
-<h2 id="声明与调用">声明与调用</h2>
-<p>首先我们来看两段代码：</p>
-<p>代码1：<strong><em>标准c</em></strong></p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">void</span> add(){ }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	add();</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
-
-
-
-<p>代码2：<strong><em>cuda c</em></strong></p>
-<figure class="highlight cuda"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add_kernel(){ }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	add_kernel&lt;&lt;&lt;<span class="number">1</span>,n&gt;&gt;&gt;(); <span class="comment">//kernel</span></div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>这两段代码，有两个有区别的地方：</p>
-<ul>
-<li>kernel函数<code>add_kernel()</code>定义时,带有修饰符<code>__global__</code>;</li>
-<li>该函数调用时，带有修饰符<code>&lt;&lt;&lt;1,n&gt;&gt;&gt;</code>。</li>
-</ul>
-<p>区别解释：</p>
-<ul>
-<li><code>__global__</code>声明说明符，表示该函数在gpu上运行，属于设备代码；</li>
-<li><code>&lt;&lt;&lt;1,n&gt;&gt;&gt;</code>修饰符，则告诉gpu如何调用设备代码，指定每次并行的cuda线程数。</li>
-</ul>
-<p>其实cuda c就是这么简单，它将设备代码传给nvcc编译，其它代码则交给主机编译器。对主机来说，cuda就这样变成透明的了，是不是很机智？</p>
-<hr>
-<h2 id="参数传递">参数传递</h2>
-<p>根据以上说明，初步了解了kernel的声明与调用, 那么应该如何传递参数给核函数呢？</p>
-<p>问1：<strong>如何传递参数给核函数呢？</strong><br>答1： 可以<strong>像c函数一样将参数传递给核函数</strong>，但<strong>kernel中只能调用显存中的数据</strong>。因此我们必须为任何有用数据分配显存空间，并将返回值传给主机。</p>
-<p>代码3：<strong><em>带参数的cuda c</em></strong></p>
-<figure class="highlight cuda"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">__global__ <span class="keyword">void</span> add_kernel(<span class="keyword">int</span> a, <span class="keyword">int</span> b, <span class="keyword">int</span> *c){</div><div class="line">	<span class="keyword">int</span> i = threadidx.x；</div><div class="line">	c[i] = a[i] + b[i] ;</div><div class="line"> }</div><div class="line"></div><div class="line"><span class="keyword">int</span> main (<span class="keyword">void</span>){</div><div class="line">	<span class="keyword">int</span> h_c;</div><div class="line">	<span class="keyword">int</span> *dev_c;</div><div class="line">	cudamalloc((<span class="keyword">void</span>**)&dev_c, <span class="keyword">sizeof</span>(<span class="keyword">int</span>)); <span class="comment">//分配显存空间</span></div><div class="line">	</div><div class="line">	add_kernel&lt;&lt;&lt;<span class="number">1</span>,n&gt;&gt;&gt;（dev_a, dev_b, dev_c); <span class="comment">//假设dev_a, dev_b已赋值</span></div><div class="line"></div><div class="line">	cudamemcpy(&h_c, dev_c, <span class="keyword">sizeof</span>(<span class="keyword">int</span>), cudamemcpydevicetohost); <span class="comment">//将显存数据传回主机	</span></div><div class="line">	cudafree(dev_c);</div><div class="line">	<span class="keyword">return</span> <span class="number">0</span>;	</div><div class="line">}</div></pre></td></tr></table></figure>
-
-<p>代码3的作用是，将大小为n的向量a和向量b相加，并将结果存入c。main函数里多了三行代码<code>cudamalloc()/cudafree()</code>和<code>cudamemcpy()</code>;它们均是cuda提供的标准函数，分别负责<strong>分配/设备设备空间</strong>和<strong>主机与设备的数据交换</strong>。</p>
-<p><strong>函数原型：</strong><br><code>cudaerror_t cudamalloc(void** devptr, size_t count);</code><br><code>cudaerror_t cudafree(void* devptr);</code><br><code>cudaerror_t cudamemcpy(void* dst, const void* src, size_t count, enum cudamemcpykind kind);</code><br>说明：<code>cudamemcpy()</code>从src指向的存储器区域将count个字符复制到dst指向的区域；<br>其中kind是<code>cudamemcpyhosttohost</code>、<code>udamemcpyhosttodevice</code>、<code>cudamemcpydevicetohost</code>或<code>cudamemcpydevicetodevice</code>之一。</p>
-<hr>
-<h2 id="线程并行">线程并行</h2>
-<p>学到这里，我们已经知道如何声明和调用核函数了，并且已经能正确传递参数给它，但依然有个问题待解决。</p>
-<p>问2：<strong>应该如何定义核函数，以使线程并行执行并准确获取所需参数呢？</strong><br>答2：执行内核的每个线程都会被分配一个独特的线程id，可通过内置的threadidx变量在内核中访问此id。我们可以利用线程id去该线程索引所需的参数值；</p>
-<p>依然以代码3为例，<code>add_kernel()</code>实际所做的工作也就是将a,b两组数据的对应元素两两相加。该函数中的代码:<br><code>int i = threadidx.x</code>作用在于获取线程id(以0开始计数)；<br><code>c[i] = a[i] + b[i]</code>则表示，每个线程将线程id作为索引号，获取该线程对应处理的元素；<br>这样就能使n个线程并行起来，每个线程实现其中一组元素的加法操作，从而避免单线程循环n次计算，大大提高运算速度。</p>
-<hr>
-<h1 id="总结">总结</h1>
-<p>总结起来，<br><strong>编程模型</strong>： 定义称为kernel的c语言函数，kernel将有n个不同的cuda线程并行执行n次；<br><strong>声明与调用</strong>： <code>__global__ void kernel ( void ){};</code><br>            <code>kernel&lt;&lt;&lt;...&gt;&gt;&gt; (); //&lt;&lt;&lt;...&gt;&gt;&gt; 指定每次调用的cuda线程数。</code><br><strong>参数传递</strong>：核函数与c函数参数传递形式一样，但核函数参数必须为设备存储区域的数据。<br><strong>线程并行</strong>：每个线程利用线程id去索引合适的元素进行计算。</p>
-<p>如果看到这里，对并行编程还不太明白，没关系。我将在下一篇博文详细介绍cuda并行编程以及线程层次结构。</p>
-]]></content>
-    <summary type="html">
-    <![CDATA[<p><strong>前言</strong><br>两个月前，我接下了移植实验室三维重建系统到gpu上执行的任务，以期实现实时重建的效果。现在，我将结合近两个月的学习更新一系列博文，以总结cuda的核心知识点。关于cuda学习资料，我推荐nvidia官方出版的《gpu高性能编程—]]>
-    </summary>
-    
-      <category term="cuda" scheme="http://niezengying.github.com/tags/cuda/"/>
+      <category term="CUDA" scheme="http://niezengying.github.com/blog/tags/CUDA/"/>
     
   </entry>
   
   <entry>
     <title><![CDATA[Hexo Introduction]]></title>
-    <link href="http://niezengying.github.com/2014/10/30/Hexo%20Intro/"/>
-    <id>http://niezengying.github.com/2014/10/30/Hexo Intro/</id>
-    <published>2014-10-29T16:49:47.000Z</published>
-    <updated>2014-10-30T06:52:51.000Z</updated>
+    <link href="http://niezengying.github.com/blog/2014/10/30/Hexo%20Intro/"/>
+    <id>http://niezengying.github.com/blog/2014/10/30/Hexo Intro/</id>
+    <published>2014-10-30T06:52:51.256Z</published>
+    <updated>2014-10-30T06:52:51.256Z</updated>
     <content type="html"><![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io/docs/" target="_blank" rel="external">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="http://hexo.io/docs/troubleshooting.html" target="_blank" rel="external">trobuleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues" target="_blank" rel="external">GitHub</a>.</p>
 <h2 id="Quick_Start">Quick Start</h2>
 <h3 id="Create_a_new_post">Create a new post</h3>
@@ -332,7 +345,7 @@ Offset = X + Y <span class="keyword">*</span>blockDim.x <span class="keyword">*<
     <![CDATA[<p>Welcome to <a href="http://hexo.io/" target="_blank" rel="external">Hexo</a>! This is your very first post. Check <a href="http://hexo.io]]>
     </summary>
     
-      <category term="Other" scheme="http://niezengying.github.com/tags/Other/"/>
+      <category term="Other" scheme="http://niezengying.github.com/blog/tags/Other/"/>
     
   </entry>
   

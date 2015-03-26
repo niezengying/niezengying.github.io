@@ -1,16 +1,13 @@
 
-  
-    <!DOCTYPE HTML>
+ <!DOCTYPE HTML>
 <html lang="zh-CN">
 <head>
   <meta charset="UTF-8">
   
-    <title>resume | Echo Nie&#39;s Blog</title>
+    <title>new hexo | Echo Nie&#39;s Blog</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=3, minimum-scale=1">
     
     <meta name="author" content="Ying Nie">
-    
-    <meta name="description" content="Smile - Singing - Staking - Science">
     
     
     
@@ -26,9 +23,9 @@
 
 </head>
 
-      <body>
-        <header>
-          <div>
+  <body>
+    <header>
+      <div>
 		
 			<div id="textlogo">
 				<h1 class="site-name"><a href="/" title="Echo Nie&#39;s Blog">Echo Nie&#39;s Blog</a></h1>
@@ -60,27 +57,32 @@
 			</nav>			
 </div>
 
-        </header>
-        <div id="container">
-          <div id="main" class="page" itemscope itemprop="blogPost">
+    </header>
+    <div id="container">
+      <div id="main" class="post" itemscope itemprop="blogPost">
 	<article itemprop="articleBody"> 
 		<header class="article-info clearfix">
   <h1 itemprop="name">
     
-      <a href="/resume/index.html" title="resume" itemprop="url">resume</a>
+      <a href="/2015/03/26/new-hexo/" title="new hexo" itemprop="url">new hexo</a>
   </h1>
   <p class="article-author">By
     
       <a href="http://niezengying.github.com/blog" title="Ying Nie">Ying Nie</a>
     </p>
   <p class="article-time">
-    <time datetime="0010-06-19T18:56:09.000Z" itemprop="datePublished">6月 20 0010</time>
-    更新日期:<time datetime="2014-10-30T06:56:10.456Z" itemprop="dateModified">10月 30 2014</time>
+    <time datetime="2015-03-26T11:27:21.000Z" itemprop="datePublished">3月 26 2015</time>
+    更新日期:<time datetime="2015-03-26T11:27:21.796Z" itemprop="dateModified">3月 26 2015</time>
     
   </p>
 </header>
 	<div class="article-content">
 		
+		
+		<div id="toc" class="toc-article">
+			<strong class="toc-title">文章目录</strong>
+		
+		</div>
 		
 		  
 	</div>
@@ -91,21 +93,66 @@
 
 <div class="article-share" id="share">
 
-  <div data-url="http://niezengying.github.com/blog/resume/index.html" data-title="resume | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
+  <div data-url="http://niezengying.github.com/blog/2015/03/26/new-hexo/" data-title="new hexo | Echo Nie&#39;s Blog" data-tsina="null" class="share clearfix">
   </div>
 
 </div>
 </footer>   	       
 	</article>
 	
+<nav class="article-nav clearfix">
+ 
+
+<div class="next">
+<a href="/2014/11/01/CUDA1-kernel/"  title="CUDA1-核函数">
+ <strong>NEXT:</strong><br/> 
+ <span>CUDA1-核函数
+</span>
+</a>
+</div>
+
+</nav>
+
 	
 <section class="comment">
 	<div class="ds-thread"></div>
 </section>
 
 </div>  
-        </div>
-        <footer><div id="footer" >
+      <div class="openaside"><a class="navbutton" href="#" title="显示侧边栏"></a></div>
+
+  <div id="toc" class="toc-aside">
+  <strong class="toc-title">文章目录</strong>
+  
+  </div>
+
+<div id="asidepart">
+<div class="closeaside"><a class="closebutton" href="#" title="隐藏侧边栏"></a></div>
+<aside class="clearfix">
+
+  
+
+  
+  <div class="tagcloudlist">
+    <p class="asidetitle">标签云</p>
+    <div class="tagcloudlist clearfix">
+       <a href="/tags/CUDA/" style="font-size: 10.00px;">CUDA</a><a href="/tags/Other/" style="font-size: 10.00px;">Other</a><a href="/tags/cuda/" style="font-size: 20.00px;">cuda</a>
+    </div>
+  </div>
+
+
+  <div class="widget tag">
+<iframe width="100%" height="550" class="share_self"  frameborder="0" scrolling="no" src="http://widget.weibo.com/weiboshow/index.php?language=&width=0&height=550&fansRow=2&ptype=1&speed=0&skin=1&isTitle=1&noborder=1&isWeibo=1&isFans=1&uid=1800326713&verifier=0cef0e67&dpc=1"></iframe>
+</div>
+
+  <div class="rsspart">
+	<a href="null" target="_blank" title="rss">RSS 订阅</a>
+</div>
+
+</aside>
+</div>
+    </div>
+    <footer><div id="footer" >
 	
 	
 	<div class="social-font clearfix">
@@ -122,7 +169,7 @@
 		</p>
 </div>
 </footer>
-        <script src="/js/jquery-2.1.0.min.js"></script>
+    <script src="/js/jquery-2.1.0.min.js"></script>
 <script type="text/javascript">
 $(document).ready(function(){ 
   $('.navbar').click(function(){
@@ -149,6 +196,8 @@ $(document).ready(function(){
       m.removeClass('moveMain');
       a.css('display', 'block').removeClass('fadeOut');
       o.css('display', 'none');
+      
+      $('#toc.toc-aside').css('display', 'none');
         
     }
   });
@@ -165,6 +214,38 @@ $(document).ready(function(){
   $(window).scroll(function(){
     o.css("top",Math.max(80,260-$(this).scrollTop()));
   });
+});
+</script>
+
+<script type="text/javascript">
+$(document).ready(function(){ 
+  var ai = $('.article-content>iframe'),
+      ae = $('.article-content>embed'),
+      t  = $('#toc'),
+      h  = $('article h2')
+      ah = $('article h2'),
+      ta = $('#toc.toc-aside'),
+      o  = $('.openaside'),
+      c  = $('.closeaside');
+  if(ai.length>0){
+    ai.wrap('<div class="video-container" />');
+  };
+  if(ae.length>0){
+   ae.wrap('<div class="video-container" />');
+  };
+  if(ah.length==0){
+    t.css('display','none');
+  }else{
+    c.click(function(){
+      ta.css('display', 'block').addClass('fadeIn');
+    });
+    o.click(function(){
+      ta.css('display', 'none');
+    });
+    $(window).scroll(function(){
+      ta.css("top",Math.max(140,320-$(this).scrollTop()));
+    });
+  };
 });
 </script>
 
@@ -214,6 +295,5 @@ $(document).ready(function(){
 
 
 
-      </body>
-     </html>
-     
+  </body>
+</html>
