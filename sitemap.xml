@@ -2,6 +2,11 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
+    <loc>http://niezengying.github.com/blog/about/index.html</loc>
+    <lastmod>2015-03-26T16:17:06.304Z</lastmod>
+  </url>
+  
+  <url>
     <loc>http://niezengying.github.com/blog/2015/03/26/new-hexo/</loc>
     <lastmod>2015-03-26T11:27:21.796Z</lastmod>
   </url>
@@ -49,11 +54,6 @@
   <url>
     <loc>http://niezengying.github.com/blog/tags/index.html</loc>
     <lastmod>2014-10-30T05:31:32.805Z</lastmod>
-  </url>
-  
-  <url>
-    <loc>http://niezengying.github.com/blog/about/index.html</loc>
-    <lastmod>2014-10-30T02:04:09.883Z</lastmod>
   </url>
   
 </urlset>
